@@ -1,9 +1,35 @@
 if (Meteor.isClient) {
+
+  //Set up routes for different pages
+  Router.map( function () {
+
+    //Search page
+    this.route ("search", {
+      template : "search_page"
+    });
+
+    //Patient pages
+    this.route("patients", {
+      path : "/patient/:_id",
+      template : "patient_page"
+    });
+  });
+
   Patients = new Meteor.Collection("patients");
   Alerts = new Meteor.Collection("alerts");
 
-  //Runs whenever the DOM is ready... NOT
+  //Runs whenever the DOM is ready
   Meteor.startup(function () {
+
+    function propComparator(prop) {
+      return function(a, b) {
+        if(a[prop] > b[prop]) {
+          return 1;
+        } else {
+          return -1;
+        }
+      }
+    }
 
     //Set up autocomplete functionality of search when all users are found
     Meteor.subscribe ("all_patients", function () {
@@ -11,13 +37,56 @@ if (Meteor.isClient) {
       var pat_list = [];
 
       Patients.find().forEach( function(e) {
-        pat_list.push(e.first_name + " " + e.last_name);
+        pat_list.push({
+          val : e._id,
+          label : e.first_name + " " + e.last_name
+        });
       });
+
+      //Sort names
+      pat_list.sort(propComparator("label"));
 
       $('#search').autocomplete({
-        source: pat_list.sort()
+        source : pat_list,
+        select : function (event, ui) {
+          Router.go("/patient/" + ui.item.val);
+          event.preventDefault();
+        }
       });
 
+      $('#search').keypress(function (e) {
+        //If user presses enter
+        if (e.keyCode === 13) {
+          
+          var name = $(this).val();
+
+          //Run trough list if we find a match, go to the page
+          if (name.length > 0){
+            pat_list.forEach( function (elt) {
+              if ( name.toLowerCase() === elt.label.toLowerCase() ){
+                Router.go("/patient/" + elt.val);
+                return false;
+              }
+            });
+          }
+        }
+      });
+
+      $('#go').click( function (evt) {
+
+        var name = $('#search').val();
+
+        //Run trough list if we find a match, go to the page
+        if (name.length > 0){
+          pat_list.forEach( function (elt) {
+            if ( name.toLowerCase() === elt.label.toLowerCase() ){
+              Router.go("/patient/" + elt.val);
+              return false;
+            }
+          });
+        }
+
+      });
     });
 
   });
