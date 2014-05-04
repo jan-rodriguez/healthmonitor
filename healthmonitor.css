@@ -1,1 +1,30 @@
 /* CSS declarations go here */
+#searchdiv {
+	position:	relative;
+	top:		100px;
+}
+
+#maindiv {
+	text-align: center;
+}
+
+#prompt {
+	font-size: 	26px;
+}
+
+#search {
+	margin: 	15px;
+}
+
+#alertdiv {
+	height: 	100px;
+	overflow-y: scroll;
+	width: 		800px;
+	display: 	inline-block;
+}
+
+.alert {
+	background-color: lightcoral;
+	margin: 1px;
+	color: black;
+}

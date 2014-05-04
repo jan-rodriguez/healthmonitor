@@ -6,3 +6,7 @@
 standard-app-packages
 autopublish
 insecure
+jquery
+jquery-ui
+bootstrap
+jquery-ui-bootstrap

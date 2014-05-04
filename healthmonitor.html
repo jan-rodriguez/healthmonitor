@@ -3,11 +3,38 @@
 </head>
 
 <body>
-  {{> hello}}
+  <div id="maindiv">
+    <nav class="navbar navbar-default" role="navigation">
+      <div class="container-fluid">
+          <div class="navbar-header">
+              <a class="navbar-brand" href="#">Health Monitor</a>
+          </div>
+      </div>
+    </nav>
+
+    <div id="contentdiv">
+      <div id="alertdiv">
+        {{> alerts}}
+      </div>
+
+      <div id="searchdiv">
+        <span id="prompt">Find Patient</span>
+        <br>
+        <input id="search" type="text" size="50">
+        <br>
+        <input id="go" type="button" class="btn btn-primary" value="Search">
+      </div>
+    </div>
+  </div>
 </body>
 
-<template name="hello">
-  <h1>Hello World!</h1>
-  {{greeting}}
-  <input type="button" value="Click" />
+<template name="alerts">
+  {{#each alert_list}}
+    <a href="#">
+      <div class="alert">
+        <button type="button" class="close">X</button>
+        {{message}} 
+      </div>
+    </a>
+  {{/each}}
 </template>
