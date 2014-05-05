@@ -1,1 +1,45 @@
-/* CSS declarations go here */
+body {
+	font-size: 16px;
+}
+
+.alert {
+	background-color: lightcoral;
+	color:	black;
+	text-shadow: none;
+}
+
+.error {
+	padding: 8px;
+	margin-bottom: 10px;
+}
+
+.center {
+	text-align: center;
+}
+
+.inblock {
+	display: inline-block;
+}
+
+.width-400 {
+	width: 400px;
+	margin: 0 auto;
+}
+
+input[type=password], input[type=email] {
+    height: 28px !important;
+    margin-bottom: 15px !important;
+}
+
+.fixed-layout {
+	table-layout: fixed;
+}
+
+.nav-search {
+	height:	34px !important;
+	width: 130%;
+}
+
+.input-append {
+	margin-bottom: 5px;
+}
