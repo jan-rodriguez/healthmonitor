@@ -10,43 +10,43 @@
 <template name="navbar">
 	<nav class="navbar navbar-default" role="navigation">
 		<div class="container-fluid">
-	  		<table width="100%" class="fixed-layout">
-	  	  		<tr>
-	  	    		<td>
-	  		  			<div class="navbar-header">
-	   	  	    			<a class="brand" href="/">Health Monitor</a>
-	  		  			</div>
-	  				</td>
-	  				<td>
-	   		  			<div class="inblock">
-	   		  			{{#if currentUser}}
-	      		  			<form class="navbar-form" role="search">
-	        	    			<div class="input-append">
-	          		  				<input type="text" class="nav-search" placeholder="Search" required>
-	          		  				<button type="submit" class="btn btn-default">Search</button>
-	        	    			</div>	
-	      		  			</form>
-		      			{{/if}}
-	    	  			</div>
+			<table width="100%" class="fixed-layout">
+				<tr>
+					<td>
+						<div class="navbar-header">
+							<a class="brand" href="/">Health Monitor</a>
+						</div>
 					</td>
 					<td>
-	    	  			<div class="inblock pull-right">
-	      					<ul class="nav navbar-nav">
-	        	  				<li>
-	        	  				{{#if currentUser}}
-	        	  	  				<a id='logout' href="#">logout</a>
-	        	  				{{else}} {{#if currentPage '/'}}
-	        	  	  				<a href="/signup">sign up</a>
-	        	  				{{else}}
-	        	  	 	 			<a href="/">log in</a>
-	        	  				{{/if}} {{/if}}
-	        	  				</li>
-	      	  				</ul>
-	    	  			</div>
+						<div class="inblock">
+						{{#if currentUser}}
+							<form class="navbar-form" role="search">
+								<div class="input-append">
+									<input type="text" class="nav-search" placeholder="Search" required>
+									<button type="submit" class="btn btn-default">Search</button>
+								</div>	
+							</form>
+						{{/if}}
+						</div>
 					</td>
-		  		</tr>
+					<td>
+						<div class="inblock pull-right">
+							<ul class="nav navbar-nav">
+								<li>
+								{{#if currentUser}}
+									<a id='logout' href="#">logout</a>
+								{{else}} {{#if currentPage '/'}}
+									<a href="/signup">sign up</a>
+								{{else}}
+									<a href="/">log in</a>
+								{{/if}} {{/if}}
+								</li>
+							</ul>
+						</div>
+					</td>
+				</tr>
 			</table>
-	  	</div>
+		</div>
 	</nav>
 </template>
 
