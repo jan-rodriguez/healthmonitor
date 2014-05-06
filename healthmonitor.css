@@ -8,17 +8,19 @@ body {
 	text-shadow: none;
 }
 
-.error {
-	padding: 8px;
-	margin-bottom: 10px;
-}
-
 .center {
 	text-align: center;
 }
 
 .inblock {
 	display: inline-block;
+}
+
+/* Login */
+
+.error {
+	padding: 8px;
+	margin-bottom: 10px;
 }
 
 .width-400 {
@@ -30,6 +32,8 @@ input[type=password], input[type=email] {
     height: 28px !important;
     margin-bottom: 15px !important;
 }
+
+/* Navbar */
 
 .fixed-layout {
 	table-layout: fixed;
@@ -43,3 +47,65 @@ input[type=password], input[type=email] {
 .input-append {
 	margin-bottom: 5px;
 }
+
+/* Medications */
+
+#medtable {
+	margin-bottom: 0px;
+}
+
+#medtable.table>thead>tr>th {
+	border-bottom: 0px;
+}
+
+.theader {
+	border-bottom: 3px solid black !important;
+}
+
+.bigfont {
+	font-size: 24px;
+}
+
+.popover {
+	min-width: 410px;
+}
+
+.popover-title {
+	background-color: #428bca;
+	text-align: center;
+	font-size: 16px;
+	color: #fff;
+}
+
+.norm {
+	width: auto;
+	display: inline-block;
+	color: #333;
+}
+
+input.norm {
+	height: 28px !important;
+}
+
+.width-90-pc {
+	width: 90%;
+}
+
+.medications-div {
+	display: inline-block;
+	border: solid 1px;
+}
+
+textarea, .form-horizontal {
+	margin-bottom: 10px;
+}
+
+.mar-right {
+	margin-right: 14px;
+}
+
+.mar-left {
+	margin-left: 14px;
+}
+
+

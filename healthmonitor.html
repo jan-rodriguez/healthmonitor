@@ -116,8 +116,85 @@
 
 <!-- End Sign Up Template -->
 
+<!-- Medications Template -->
+
+<template name="medications">
+	<table id="medtable" class="table">
+		<thead>
+			<tr>
+				<th colspan="5" class="theader bigfont center">Current Medications</th>
+				<td colspan="2" class="theader">
+					<div class="popover-markup"> 
+						<button id="prescribe" type="button popover-markup" class="btn btn-primary trigger" data-placement="top">Prescribe New</button>
+						<div class="head hide">Prescribe New Medication</div>
+						<div class="content hide">
+							<div class="form-group">
+								<form id="medication-form" action="action">
+									<input type="text" class="form-control norm" size="56" placeholder="Name of Medication" required>
+									<div class="form-horizontal">
+										<input type="text" class="form-control norm mar-right" size="4" placeholder="0" required>
+										<select class="form-control norm mar-right">
+											<option value="ml">ml</option>
+											<option value="mg">mg</option>
+											<option value="tbsp">tbsp</option>
+										</select>
+										every
+										<input type="text" class="form-control norm mar-right mar-left" size="4" placeholder="0" required>
+										<select class="form-control norm">
+											<option value="hrs">hrs</option>
+											<option value="days">days</option>
+											<option value="weeks">weeks</option>
+										</select>	 
+									</div>
+									<input type="text" class="form-control norm" size="56" placeholder="Reason">
+									<textarea class="form-control norm" cols="56" placeholder="Comment..."></textarea> 
+									<button id="addmed" type="button" class="btn btn-default btn-block">Add</button>
+								</form>
+							</div>
+						</div>
+					</div>
+				</td>
+			</tr>
+			<tr>
+				<th>&nbsp;</th>
+				<th>&nbsp;</th>
+				<th>Name</th>
+				<th>Dose</th>
+				<th>Prescribed By</th>
+				<th>Reason</th>
+				<th>Comment</th>
+			</tr>
+		</thead>
+		<tbody>
+		{{#each current_medications 1}}
+			{{> medication}}
+		{{/each}}
+		</tbody>
+	</table>
+</template>
+
+<!-- End Medications Template -->
+
+<template name="medication">
+	<tr>
+		<td><a href="#" class="disabled edit">edit</a></td>
+		<td><a href="#" class="disabled discontinue">discontinue</a></td>
+		<td>{{name}}</td>
+		<td>{{dose}} {{dose_unit}} every {{frequency}} {{frequency_unit}}</td>
+		<td>Dr. {{doctor_name doctor_id}}</td>
+		<td>{{reason}}</td>
+		<td>{{comment}}</td>
+	</tr>
+</template>
 
 <template name="home">
 	{{> navbar}}
+	<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+	<div class="center">
+		<div class="inblock width-90-pc medications-div">
+			{{> medications}}
+		</div>
+	</div>
 	search
 </template>
+
