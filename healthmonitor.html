@@ -38,28 +38,21 @@
 
   <div id="maindiv">
 
-    <nav id="patientnav" class="navbar navbar-default" role="navigation">
-      <div class="container-fluid">
-        <div class="navbar-header">
-          <a class="navbar-brand" href="search.html">Health Monitor</a>
-        </div>
-      </div>
-    </nav>
+    {{> navbar}}
 
     <br>
 
     <div id="contentdiv">
-      <input id="backbutton" type="button" class="btn btn-primary" value="Back">
       <table id="patientinfo">
         <tr>
-          <th>&nbsp;</th>
-          <th>{{first_name}} &nbsp; {{last_name}}</th>
-          <th>&nbsp;</th>
+          <th></th>
+          <th id="patientname">{{first_name}} &nbsp; {{last_name}}</th>
+          <th></th>
         </tr>
         <tr>
-          <td>Age: 21</td>
-          <td>Blood Type: B-</td>
-          <td>Gender: M</td>
+          <td>Age: {{age}}</td>
+          <td>Blood Type: {{blood_type}}</td>
+          <td>Gender: {{gender}}</td>
         </tr>
       </table>
 
@@ -82,111 +75,18 @@
       <br><br>
       <div id="graphs-wrapper">
         <div id="graphs">
-          <img id="graph-img" src="images/pressure_year.png" alt="Blood Pressure">
+          <!-- Add Graph here -->
         </div>
-        <img id="medicines-img" src="images/medicines_year.png" alt="Medicines">
+          <!-- Add medications graph here -->
         <div>
-
           <br>
-
           <select id="timeselect" class="form-control">
             <option value="1">1 year</option>
             <option value="2">6 months</option>
           </select>
-
           <br><br><br>
-
-          <div id="medications">
-
-            <table id="medtable" class="table">
-              <thead>
-                <tr>
-                  <th colspan="5" class="theader bigfont center">Current Medications</th>
-                  <td colspan="2" class="theader">
-                    <div class="popover-markup"> 
-                      <button id="prescribe" type="button popover-markup" class="btn btn-primary trigger" data-placement="top">Prescribe New</button>
-                      <div class="head hide">Prescribe New Medication</div>
-                      <div class="content hide">
-                        <div class="form-group">
-                          <input type="text" class="form-control norm" size="56" placeholder="Name of Medication">
-                          <input type="text" class="form-control norm" size="4" placeholder="0">
-                          <select class="form-control norm">
-                            <option value="1">ml</option>
-                            <option value="2">mg</option>
-                            <option value="3">tbsp</option>
-                          </select>
-                          per
-                          <input type="text" class="form-control norm" size="4" placeholder="0">
-                          <select class="form-control norm">
-                            <option value="1">hrs</option>
-                            <option value="2">days</option>
-                            <option value="3">weeks</option>
-                          </select>  
-                          <input type="text" class="form-control norm" size="56" placeholder="Reason">
-                          <textarea class="form-control norm" cols="58" placeholder="Comment..."></textarea> 
-                          <button id="addmed" type="button" class="btn btn-default btn-block">Add</button>
-                        </div>
-                      </div>
-                    </div>
-                  </td>
-                </tr>
-                <tr>
-                  <th>&nbsp;</th>
-                  <th>&nbsp;</th>
-                  <th>Name</th>
-                  <th>Dose</th>
-                  <th>Prescribed By</th>
-                  <th>Reason</th>
-                  <th>Comment</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>
-                    <a href="#" class="disabled">edit</a>
-                  </td>
-                  <td>
-                    <a href="#" class="disabled">remove</a>
-                  </td>
-                  <td>Tylenol</td>
-                  <td>100mg/24hrs</td>
-                  <td>Dr. No</td>
-                  <td>Headache</td>
-                  <td></td>
-                </tr>
-                <tr>
-                  <td>
-                    <a href="#" class="disabled">edit</a>
-                  </td>
-                  <td>
-                    <a href="#" class="disabled">remove</a>
-                  </td>
-                  <td>Pepto-Bismol</td>
-                  <td>30ml/hr</td>
-                  <td>Dr. Tran</td>
-                  <td>Stomach ache</td>
-                  <td></td>
-                </tr>
-                <tr id="benadryl" class="hide">
-                  <td>
-                    <a href="#" class="disabled">edit</a>
-                  </td>
-                  <td>
-                    <a href="#" class="disabled">remove</a>
-                  </td>
-                  <td>Benadryl</td>
-                  <td>50mg/24hr</td>
-                  <td>Dr. Tran</td>
-                  <td>Allergy</td>
-                  <td></td>
-                </tr>           
-              </tbody>
-            </table>
-
-          </div>
-
+          {{> medications}}
           <br><br><br>
-
         </div>
       </div>
     </div>

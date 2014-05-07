@@ -1,6 +1,9 @@
 
 if (Meteor.isClient) {
 
+
+  currentUser = Meteor.user();
+
   Patients = new Meteor.Collection("patients");
   Medications = new Meteor.Collection("medications");
   Doctors = new Meteor.Collection("doctors");
@@ -36,8 +39,6 @@ if (Meteor.isClient) {
         return Meteor.subscribe('all_patients');
       },
       data : function () {
-        var returnVal = Patients.findOne(this.params._id);
-        console.log(returnVal);
         return Patients.findOne(this.params._id);
       }
     });
@@ -141,9 +142,6 @@ if (Meteor.isClient) {
     }
   });
 
-  currentUser = Meteor.user();
-
-
   //Compare current path
   UI.registerHelper("currentPage", function(localPath) {
     return Router.current(true).path === localPath;
@@ -163,7 +161,6 @@ if (Meteor.isClient) {
           $('#login-error').html('<div class="alert alert-warning error">Your username or password was incorrect</div>');
           $('#login-password').val('');
         } else {
-          console.log("going home");
           Router.go('home');
         }
       });
@@ -214,17 +211,16 @@ if (Meteor.isClient) {
     }
   });
 
-  Template.medications.current_medications = function (pat_id) {
-    return Medications.find({patient_id: pat_id, end_date: null});
-  };
-
-  Template.medications.current_patient = function () {
-    return Router.current(true).path;
+  Template.medications.current_medications = function () {
+    if(Router.getData()) {
+      return Medications.find({patient_id: Router.getData().join_id, end_date: null});
+    }
+    
   };
 
   //not working
   Template.medication.doctor_name = function () {
-    console.log(Doctors.find({join_id: this.doctor_id}));
+    // console.log(Doctors.find({join_id: this.doctor_id}));
   };
 
   Template.medication.events({
@@ -273,157 +269,197 @@ if (Meteor.isServer) {
     Doctors = new Meteor.Collection("doctors");
     Alerts = new Meteor.Collection("alerts");
 
-  // code to run on server at startup
-  Meteor.publish("all_patients", function(){
-    return Patients.find();
-  });
+    // code to run on server at startup
+    Meteor.publish("all_patients", function(){
+      return Patients.find();
+    });
 
-  Meteor.publish("all_doctors", function() {
-    return Doctors.find();
-  });
+    Meteor.publish("all_doctors", function() {
+      return Doctors.find();
+    });
 
-  // Meteor.publish("all_medications", function() {
-  //   return Medications.find();
-  // });
-  //Patients.remove({});
-  if (Patients.find().count() === 0) {
-    Patients.insert({
-      join_id: 1,
-      first_name : "John",
-      last_name : "Doe"
-    });
-    Patients.insert({
-      join_id: 2,
-      first_name : "John",
-      last_name : "Adams"
-    });
-    Patients.insert({
-      join_id: 3,
-      first_name : "Ben",
-      last_name : "Bitdiddle"
-    });
-    Patients.insert({
-      join_id: 4,
-      first_name : "Gabriel",
-      last_name : "Frattallone"
-    });
-    Patients.insert({
-      join_id: 5,
-      first_name : "Jan",
-      last_name : "Rodriguez"
-    });
-    Patients.insert({
-      join_id: 6,
-      first_name : "Harry",
-      last_name : "Sanabria"
-    });
-    Patients.insert({
-      join_id: 7,
-      first_name : "Joe",
-      last_name : "Johnson"
-    });
-    Patients.insert({
-      join_id: 8,
-      first_name : "Bob",
-      last_name : "Bobbert"
-    });
-  }
+    // Meteor.publish("all_medications", function() {
+    //   return Medications.find();
+    // });
+    // Patients.remove({});
+    if (Patients.find().count() === 0) {
+      Patients.insert({
+        join_id: 1,
+        first_name : "John",
+        last_name : "Doe",
+        age : "30",
+        blood_type : "A",
+        gender : "M"
+      });
+      Patients.insert({
+        join_id: 2,
+        first_name : "John",
+        last_name : "Adams",
+        age : "22",
+        blood_type : "O",
+        gender : "M"
+      });
+      Patients.insert({
+        join_id: 3,
+        first_name : "Ben",
+        last_name : "Bitdiddle",
+        age : "10",
+        blood_type : "AB",
+        gender : "M"
+      });
+      Patients.insert({
+        join_id: 4,
+        first_name : "Gabriel",
+        last_name : "Frattallone",
+        age : "57",
+        blood_type : "B",
+        gender : "M"
+      });
+      Patients.insert({
+        join_id: 5,
+        first_name : "Jan",
+        last_name : "Rodriguez",
+        age : "76",
+        blood_type : "B",
+        gender : "M"
+      });
+      Patients.insert({
+        join_id: 6,
+        first_name : "Harry",
+        last_name : "Sanabria",
+        age : "27",
+        blood_type : "O",
+        gender : "M"
+      });
+      Patients.insert({
+        join_id: 7,
+        first_name : "Joe",
+        last_name : "Johnson",
+        age : "45",
+        blood_type : "A",
+        gender : "M"
+      });
+      Patients.insert({
+        join_id: 8,
+        first_name : "Bob",
+        last_name : "Bobbert",
+        age : "29",
+        blood_type : "AB",
+        gender : "M"
+      });
+      Patients.insert({
+        join_id: 9,
+        first_name : "Natalie",
+        last_name : "Bobbert",
+        age : "28",
+        blood_type : "A",
+        gender : "F"
+      });
+      Patients.insert({
+        join_id: 10,
+        first_name : "Ashley",
+        last_name : "Smith",
+        age : "35",
+        blood_type : "O",
+        gender : "F"
+      });
+    }
 
-  //Alerts.remove({});
-  if (Alerts.find().count() === 0){
-    Alerts.insert({
-      message : "A wild Gabo appeared",
-      show : 1,
-      patient_id : 5
-    });
-    Alerts.insert({
-      message : "Don't look at the sun",
-      show : 1,
-      patient_id : 1
-    });
-  }
+    //Alerts.remove({});
+    if (Alerts.find().count() === 0){
+      Alerts.insert({
+        message : "A wild Gabo appeared",
+        show : 1,
+        patient_id : 5
+      });
+      Alerts.insert({
+        message : "Don't look at the sun",
+        show : 1,
+        patient_id : 1
+      });
+    }
 
-  //Medications.remove({});
-  if (Medications.find().count() === 0) {
-    Medications.insert({
-      patient_id : 1,
-      doctor_id : 2,
-      name : "Tylenol",
-      dose : 50,
-      dose_unit : "mg",
-      frequency : 24,
-      frequency_unit : "hours",
-      comment : "",
-      reason : "headache",
-      start_date : new Date(2014, 1, 25, 0, 0, 0, 0),
-      end_date : null
-    });
-    Medications.insert({
-      patient_id : 1,
-      doctor_id : 1,
-      name : "Advil",
-      dose : 150,
-      dose_unit : "mg",
-      frequency : 2,
-      frequency_unit : "days",
-      comment : "",
-      reason : "high blood pressure",
-      start_date : new Date(2014, 3, 20, 0, 0, 0, 0),
-      end_date : null
-    });
-    Medications.insert({
-      patient_id : 1,
-      doctor_id : 1,
-      name : "Pepto Bismol",
-      dose : 150,
-      dose_unit : "ml",
-      frequency : 8,
-      frequency_unit : "hours",
-      comment : "",
-      reason : "indigestion",
-      start_date : new Date(2013, 1, 15, 0, 0, 0, 0),
-      end_date : new Date(2013, 5, 5, 0, 0, 0, 0)
-    });
-    Medications.insert({
-      patient_id : 2,
-      doctor_id : 2,
-      name : "Advil",
-      dose : 150,
-      dose_unit : "mg",
-      frequency : 2,
-      frequency_unit : "days",
-      comment : "",
-      reason : "high blood pressure",
-      start_date : new Date(2014, 3, 20, 0, 0, 0, 0),
-      end_date : null
-    });
-    Medications.insert({
-      patient_id : 3,
-      doctor_id : 2,
-      name : "Pepto Bismol",
-      dose : 150,
-      dose_unit : "ml",
-      frequency : 8,
-      frequency_unit : "hours",
-      comment : "",
-      reason : "indigestion",
-      start_date : new Date(2013, 1, 15, 0, 0, 0, 0),
-      end_date : new Date(2013, 5, 5, 0, 0, 0, 0)
-    });
-  }
+    // Medications.remove({});
+    if (Medications.find().count() === 0) {
+      Medications.insert({
+        patient_id : 5,
+        doctor_id : 2,
+        name : "Tylenol",
+        dose : 50,
+        dose_unit : "mg",
+        frequency : 24,
+        frequency_unit : "hours",
+        comment : "",
+        reason : "headache",
+        start_date : new Date(2014, 1, 25, 0, 0, 0, 0),
+        end_date : null
+      });
+      Medications.insert({
+        patient_id : 1,
+        doctor_id : 1,
+        name : "Advil",
+        dose : 150,
+        dose_unit : "mg",
+        frequency : 2,
+        frequency_unit : "days",
+        comment : "",
+        reason : "high blood pressure",
+        start_date : new Date(2014, 3, 20, 0, 0, 0, 0),
+        end_date : null
+      });
+      Medications.insert({
+        patient_id : 1,
+        doctor_id : 1,
+        name : "Pepto Bismol",
+        dose : 150,
+        dose_unit : "ml",
+        frequency : 8,
+        frequency_unit : "hours",
+        comment : "",
+        reason : "indigestion",
+        start_date : new Date(2013, 1, 15, 0, 0, 0, 0),
+        end_date : new Date(2013, 5, 5, 0, 0, 0, 0)
+      });
+      Medications.insert({
+        patient_id : 2,
+        doctor_id : 2,
+        name : "Advil",
+        dose : 150,
+        dose_unit : "mg",
+        frequency : 2,
+        frequency_unit : "days",
+        comment : "",
+        reason : "high blood pressure",
+        start_date : new Date(2014, 3, 20, 0, 0, 0, 0),
+        end_date : null
+      });
+      Medications.insert({
+        patient_id : 3,
+        doctor_id : 2,
+        name : "Pepto Bismol",
+        dose : 150,
+        dose_unit : "ml",
+        frequency : 8,
+        frequency_unit : "hours",
+        comment : "",
+        reason : "indigestion",
+        start_date : new Date(2013, 1, 15, 0, 0, 0, 0),
+        end_date : new Date(2013, 5, 5, 0, 0, 0, 0)
+      });
+    }
 
-  if (Doctors.find().count() === 0) {
-    Doctors.insert({
-      join_id: 1,
-      first_name : "Yes",
-      last_name : "No"
-    });
-    Doctors.insert({
-      join_id: 2,
-      first_name : "Jorge",
-      last_name : "Rosario"
-    });
-  }
+    if (Doctors.find().count() === 0) {
+      Doctors.insert({
+        join_id: 1,
+        first_name : "Yes",
+        last_name : "No"
+      });
+      Doctors.insert({
+        join_id: 2,
+        first_name : "Jorge",
+        last_name : "Rosario"
+      });
+    }
 
   });
 }
