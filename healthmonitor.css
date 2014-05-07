@@ -3,11 +3,26 @@ body {
 	font-size: 16px;
 }
 
-.alert {
+#alertdiv {
+	height: 	500px;
+	overflow-y: hidden;
+	width: 		800px;
+	display: 	inline-block;
+}
+
+#maindiv {
+	text-align: center;
+}
+
+.alerts {
 	background-color: lightcoral;
 	color:	black;
 	margin: 1px;
+	margin-bottom: 5px;
 	text-shadow: none;
+	padding: 15px;
+	border: 1px solid transparent;
+	border-radius: 4px;
 }
 
 .center {

@@ -1,6 +1,11 @@
 
 if (Meteor.isClient) {
 
+  Patients = new Meteor.Collection("patients");
+  Medications = new Meteor.Collection("medications");
+  Doctors = new Meteor.Collection("doctors");
+  Alerts = new Meteor.Collection("alerts");
+
   Router.map(function () {
     this.route('root', {
       path: '/',
@@ -26,14 +31,17 @@ if (Meteor.isClient) {
     //Patient pages
     this.route("patients", {
       path : "/patient/:_id",
-      template : "patient_page"
+      template : "patient_page",
+      waitOn : function () {  // wait for the subscription to be ready; see below
+        return Meteor.subscribe('all_patients');
+      },
+      data : function () {
+        var returnVal = Patients.findOne(this.params._id);
+        console.log(returnVal);
+        return Patients.findOne(this.params._id);
+      }
     });
   });
-
-  Patients = new Meteor.Collection("patients");
-  Medications = new Meteor.Collection("medications");
-  Doctors = new Meteor.Collection("doctors");
-  Alerts = new Meteor.Collection("alerts");
 
   //Runs whenever the DOM is ready
   Meteor.startup(function () {
@@ -126,9 +134,10 @@ if (Meteor.isClient) {
   };
 
   Template.alerts.events({
-    'click .close' : function () {
+    'click .close' : function (e) {
       //Make alerts do not show whenever they are dismissed and refreshed
       Alerts.update (this._id, {show : 0});
+      e.preventDefault();
     }
   });
 
@@ -264,161 +273,157 @@ if (Meteor.isServer) {
     Doctors = new Meteor.Collection("doctors");
     Alerts = new Meteor.Collection("alerts");
 
-// code to run on server at startup
-Meteor.publish("all_patients", function(){
-  return Patients.find();
-});
+  // code to run on server at startup
+  Meteor.publish("all_patients", function(){
+    return Patients.find();
+  });
 
+  Meteor.publish("all_doctors", function() {
+    return Doctors.find();
+  });
 
+  // Meteor.publish("all_medications", function() {
+  //   return Medications.find();
+  // });
+  //Patients.remove({});
+  if (Patients.find().count() === 0) {
+    Patients.insert({
+      join_id: 1,
+      first_name : "John",
+      last_name : "Doe"
+    });
+    Patients.insert({
+      join_id: 2,
+      first_name : "John",
+      last_name : "Adams"
+    });
+    Patients.insert({
+      join_id: 3,
+      first_name : "Ben",
+      last_name : "Bitdiddle"
+    });
+    Patients.insert({
+      join_id: 4,
+      first_name : "Gabriel",
+      last_name : "Frattallone"
+    });
+    Patients.insert({
+      join_id: 5,
+      first_name : "Jan",
+      last_name : "Rodriguez"
+    });
+    Patients.insert({
+      join_id: 6,
+      first_name : "Harry",
+      last_name : "Sanabria"
+    });
+    Patients.insert({
+      join_id: 7,
+      first_name : "Joe",
+      last_name : "Johnson"
+    });
+    Patients.insert({
+      join_id: 8,
+      first_name : "Bob",
+      last_name : "Bobbert"
+    });
+  }
 
+  //Alerts.remove({});
+  if (Alerts.find().count() === 0){
+    Alerts.insert({
+      message : "A wild Gabo appeared",
+      show : 1,
+      patient_id : 5
+    });
+    Alerts.insert({
+      message : "Don't look at the sun",
+      show : 1,
+      patient_id : 1
+    });
+  }
 
-Meteor.publish("all_patients", function() {
-  return Patients.find();
-});
+  //Medications.remove({});
+  if (Medications.find().count() === 0) {
+    Medications.insert({
+      patient_id : 1,
+      doctor_id : 2,
+      name : "Tylenol",
+      dose : 50,
+      dose_unit : "mg",
+      frequency : 24,
+      frequency_unit : "hours",
+      comment : "",
+      reason : "headache",
+      start_date : new Date(2014, 1, 25, 0, 0, 0, 0),
+      end_date : null
+    });
+    Medications.insert({
+      patient_id : 1,
+      doctor_id : 1,
+      name : "Advil",
+      dose : 150,
+      dose_unit : "mg",
+      frequency : 2,
+      frequency_unit : "days",
+      comment : "",
+      reason : "high blood pressure",
+      start_date : new Date(2014, 3, 20, 0, 0, 0, 0),
+      end_date : null
+    });
+    Medications.insert({
+      patient_id : 1,
+      doctor_id : 1,
+      name : "Pepto Bismol",
+      dose : 150,
+      dose_unit : "ml",
+      frequency : 8,
+      frequency_unit : "hours",
+      comment : "",
+      reason : "indigestion",
+      start_date : new Date(2013, 1, 15, 0, 0, 0, 0),
+      end_date : new Date(2013, 5, 5, 0, 0, 0, 0)
+    });
+    Medications.insert({
+      patient_id : 2,
+      doctor_id : 2,
+      name : "Advil",
+      dose : 150,
+      dose_unit : "mg",
+      frequency : 2,
+      frequency_unit : "days",
+      comment : "",
+      reason : "high blood pressure",
+      start_date : new Date(2014, 3, 20, 0, 0, 0, 0),
+      end_date : null
+    });
+    Medications.insert({
+      patient_id : 3,
+      doctor_id : 2,
+      name : "Pepto Bismol",
+      dose : 150,
+      dose_unit : "ml",
+      frequency : 8,
+      frequency_unit : "hours",
+      comment : "",
+      reason : "indigestion",
+      start_date : new Date(2013, 1, 15, 0, 0, 0, 0),
+      end_date : new Date(2013, 5, 5, 0, 0, 0, 0)
+    });
+  }
 
-Meteor.publish("all_doctors", function() {
-  return Doctors.find();
-});
+  if (Doctors.find().count() === 0) {
+    Doctors.insert({
+      join_id: 1,
+      first_name : "Yes",
+      last_name : "No"
+    });
+    Doctors.insert({
+      join_id: 2,
+      first_name : "Jorge",
+      last_name : "Rosario"
+    });
+  }
 
-// Meteor.publish("all_medications", function() {
-//   return Medications.find();
-// });
-
-if (Patients.find().count() === 0) {
-  Patients.insert({
-    join_id: 1,
-    first_name : "John",
-    last_name : "Doe"
   });
-  Patients.insert({
-    join_id: 2,
-    first_name : "John",
-    last_name : "Adams"
-  });
-  Patients.insert({
-    join_id: 3,
-    first_name : "Ben",
-    last_name : "Bitdiddle"
-  });
-  Patients.insert({
-    join_id: 4,
-    first_name : "Gabriel",
-    last_name : "Frattallone"
-  });
-  Patients.insert({
-    join_id: 5,
-    first_name : "Jan",
-    last_name : "Rodriguez"
-  });
-  Patients.insert({
-    join_id: 6,
-    first_name : "Harry",
-    last_name : "Sanabria"
-  });
-  Patients.insert({
-    join_id: 7,
-    first_name : "Joe",
-    last_name : "Johnson"
-  });
-  Patients.insert({
-    join_id: 8,
-    first_name : "Bob",
-    last_name : "Bobbert"
-  });
-}
-
-//Alerts.remove({});
-if (Alerts.find().count() === 0){
-  Alerts.insert({
-    message : "A wild Gabo appeared",
-    show : 1
-  });
-  Alerts.insert({
-    message : "Don't look at the sun",
-    show : 1
-  });
-}
-
-if (Medications.find().count() === 0) {
-  Medications.insert({
-    patient_id : 1,
-    doctor_id : 2,
-    name : "Tylenol",
-    dose : 50,
-    dose_unit : "mg",
-    frequency : 24,
-    frequency_unit : "hours",
-    commment : "",
-    reason : "headache",
-    start_date : new Date(2014, 1, 25, 0, 0, 0, 0),
-    end_date : null
-  });
-  Medications.insert({
-    patient_id : 1,
-    doctor_id : 1,
-    name : "Advil",
-    dose : 150,
-    dose_unit : "mg",
-    frequency : 2,
-    frequency_unit : "days",
-    commment : "",
-    reason : "high blood pressure",
-    start_date : new Date(2014, 3, 20, 0, 0, 0, 0),
-    end_date : null
-  });
-  Medications.insert({
-    patient_id : 1,
-    doctor_id : 1,
-    name : "Pepto Bismol",
-    dose : 150,
-    dose_unit : "ml",
-    frequency : 8,
-    frequency_unit : "hours",
-    commment : "",
-    reason : "indigestion",
-    start_date : new Date(2013, 1, 15, 0, 0, 0, 0),
-    end_date : new Date(2013, 5, 5, 0, 0, 0, 0)
-  });
-  Medications.insert({
-    patient_id : 2,
-    doctor_id : 2,
-    name : "Advil",
-    dose : 150,
-    dose_unit : "mg",
-    frequency : 2,
-    frequency_unit : "days",
-    commment : "",
-    reason : "high blood pressure",
-    start_date : new Date(2014, 3, 20, 0, 0, 0, 0),
-    end_date : null
-  });
-  Medications.insert({
-    patient_id : 3,
-    doctor_id : 2,
-    name : "Pepto Bismol",
-    dose : 150,
-    dose_unit : "ml",
-    frequency : 8,
-    frequency_unit : "hours",
-    commment : "",
-    reason : "indigestion",
-    start_date : new Date(2013, 1, 15, 0, 0, 0, 0),
-    end_date : new Date(2013, 5, 5, 0, 0, 0, 0)
-  });
-}
-
-if (Doctors.find().count() === 0) {
-  Doctors.insert({
-    join_id: 1,
-    first_name : "Yes",
-    last_name : "No"
-  });
-  Doctors.insert({
-    join_id: 2,
-    first_name : "Jorge",
-    last_name : "Rosario"
-  });
-}
-
-});
 }

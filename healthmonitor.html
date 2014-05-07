@@ -7,7 +7,7 @@
 </body>
 
 <!-- Search Page Templates -->
-<template name="search_page">
+<template name="home">
   <div id="maindiv">
     {{> navbar}}
 
@@ -21,8 +21,8 @@
 
 <template name="alerts">
   {{#each alert_list}}
-    <a href="{{ pathFor 'patients' }}">
-      <div class="alert">
+    <a href="/patient/{{patient_id}}">
+      <div class="alerts">
         <button type="button" class="close">X</button>
         {{message}} 
       </div>
@@ -46,11 +46,6 @@
       </div>
     </nav>
 
-    <div id="alert" class="alert alert-warning">
-      <button type="button" class="close" data-dismiss="alert" aria-hidden="true">x</button>
-      John Doe has an elevated heart rate, which may be due to his Benadryl prescription.
-    </div>
-
     <br>
 
     <div id="contentdiv">
@@ -58,7 +53,7 @@
       <table id="patientinfo">
         <tr>
           <th>&nbsp;</th>
-          <th>John Doe</th>
+          <th>{{first_name}} &nbsp; {{last_name}}</th>
           <th>&nbsp;</th>
         </tr>
         <tr>
@@ -381,15 +376,4 @@
 		<td>{{reason}}</td>
 		<td>{{comment}}</td>
 	</tr>
-</template>
-
-<template name="home">
-	{{> navbar}}
-	<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
-	<div class="center">
-		<div class="inblock width-90-pc medications-div">
-			{{> medications}}
-		</div>
-	</div>
-	search
 </template>
