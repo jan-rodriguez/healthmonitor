@@ -9,25 +9,11 @@
 <!-- Search Page Templates -->
 <template name="search_page">
   <div id="maindiv">
-    <nav class="navbar navbar-default" role="navigation">
-      <div class="container-fluid">
-          <div class="navbar-header">
-              <a class="navbar-brand" href="#">Health Monitor</a>
-          </div>
-      </div>
-    </nav>
+    {{> navbar}}
 
     <div id="contentdiv">
       <div id="alertdiv">
         {{> alerts}}
-      </div>
-
-      <div id="searchdiv">
-        <span id="prompt">Find Patient</span>
-        <br>
-        <input id="search" type="text" size="50">
-        <br>
-        <button id="go" type="button" class="btn btn-primary">Search</button>
       </div>
     </div>
   </div>
@@ -232,8 +218,8 @@
 						{{#if currentUser}}
 							<form class="navbar-form" role="search">
 								<div class="input-append">
-									<input type="text" class="nav-search" placeholder="Search" required>
-									<button type="submit" class="btn btn-default">Search</button>
+									<input id="search" type="text" class="nav-search" placeholder="Search" required>
+									<button id="go" type="submit" class="btn btn-default">Search</button>
 								</div>	
 							</form>
 						{{/if}}

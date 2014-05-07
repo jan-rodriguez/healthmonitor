@@ -1,13 +1,7 @@
 {
   "packages": {
-<<<<<<< HEAD
     "jquery-ui": {},
     "jquery-ui-bootstrap": {},
     "iron-router": {}
-=======
-    "iron-router": {},
-    "bootstrap-3": {},
-    "accounts-ui-bootstrap-3": {}
->>>>>>> origin/login
   }
 }
