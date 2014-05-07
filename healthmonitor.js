@@ -1,11 +1,17 @@
 
-  if (Meteor.isClient) {
-    Router.onBeforeAction(function(pause) {
+if (Meteor.isClient) {
+  Router.onBeforeAction(function(pause) {
     if (!Meteor.user()) {
       pause();
       Router.go('root');
     }
   }, {except: ['root', 'signup']});
+  Router.onBeforeAction(function(pause) {
+    if (Meteor.user()) {
+      pause();
+      Router.go('root');
+    }
+  }, {only: ['signup']});
 
   Router.map(function () {
     this.route('root', {
@@ -35,10 +41,10 @@
     });
   });
 
-    Patients = new Meteor.Collection("patients");
-    Medications = new Meteor.Collection("medications");
-    Doctors = new Meteor.Collection("doctors");
-    Alerts = new Meteor.Collection("alerts");
+  Patients = new Meteor.Collection("patients");
+  Medications = new Meteor.Collection("medications");
+  Doctors = new Meteor.Collection("doctors");
+  Alerts = new Meteor.Collection("alerts");
 
     //Runs whenever the DOM is ready
     Meteor.startup(function () {
@@ -79,7 +85,7 @@
         $('#search').keypress(function (e) {
           //If user presses enter
           if (e.keyCode === 13) {
-            
+
             var name = $(this).val();
 
             //Run trough list if we find a match, go to the page
@@ -111,20 +117,20 @@
         });
       });
 
-    });
+});
 
-    Template.alerts.alert_list = function () {
-      return Alerts.find({show : 1});
-    };
+Template.alerts.alert_list = function () {
+  return Alerts.find({show : 1});
+};
 
-    Template.alerts.events({
-      'click .close' : function () {
+Template.alerts.events({
+  'click .close' : function () {
         //Make alerts do not show whenever they are dismissed and refreshed
         Alerts.update (this._id, {show : 0});
       }
     });
 
-    currentUser = Meteor.user();
+currentUser = Meteor.user();
 
 
     //Compare current path
@@ -171,15 +177,15 @@
         } 
 
         Accounts.createUser({email: email, password : password}, function(err){
-            if (err) {
-              var email_val = $('#signup-email').val();
-              $('#signup-error').html('<div class="alert alert-warning error">' + email_val + ' is already in use</div>');
-              $('#signup-email').val('');
-              $('#signup-password').val('');
-              $('#signup-confirm-password').val('');
-            } else {
-              Router.go('home');
-            }
+          if (err) {
+            var email_val = $('#signup-email').val();
+            $('#signup-error').html('<div class="alert alert-warning error">' + email_val + ' is already in use</div>');
+            $('#signup-email').val('');
+            $('#signup-password').val('');
+            $('#signup-confirm-password').val('');
+          } else {
+            Router.go('home');
+          }
         });
         return false;
       }
@@ -206,7 +212,7 @@
 
     //not working
     Template.medication.doctor_name = function () {
-        console.log(Doctors.find({join_id: this.doctor_id}));
+      console.log(Doctors.find({join_id: this.doctor_id}));
     };
 
     Template.medication.events({
@@ -234,7 +240,7 @@
 
         $('.popover').on('click', '#addmed', function(e) {
           // $('#benadryl').removeClass('hide');
-        $('#prescribe').popover('hide');
+          $('#prescribe').popover('hide');
           e.stopPropagation(); 
         });
 
@@ -275,48 +281,48 @@
       //   return Medications.find();
       // });
 
-      if (Patients.find().count() === 0) {
-        Patients.insert({
-          join_id: 1,
-          first_name : "John",
-          last_name : "Doe"
-        });
-        Patients.insert({
-          join_id: 2,
-          first_name : "John",
-          last_name : "Adams"
-        });
-        Patients.insert({
-          join_id: 3,
-          first_name : "Ben",
-          last_name : "Bitdiddle"
-        });
-        Patients.insert({
-          join_id: 4,
-          first_name : "Gabriel",
-          last_name : "Frattallone"
-        });
-        Patients.insert({
-          join_id: 5,
-          first_name : "Jan",
-          last_name : "Rodriguez"
-        });
-        Patients.insert({
-          join_id: 6,
-          first_name : "Harry",
-          last_name : "Sanabria"
-        });
-        Patients.insert({
-          join_id: 7,
-          first_name : "Joe",
-          last_name : "Johnson"
-        });
-        Patients.insert({
-          join_id: 8,
-          first_name : "Bob",
-          last_name : "Bobbert"
-        });
-      }
+if (Patients.find().count() === 0) {
+  Patients.insert({
+    join_id: 1,
+    first_name : "John",
+    last_name : "Doe"
+  });
+  Patients.insert({
+    join_id: 2,
+    first_name : "John",
+    last_name : "Adams"
+  });
+  Patients.insert({
+    join_id: 3,
+    first_name : "Ben",
+    last_name : "Bitdiddle"
+  });
+  Patients.insert({
+    join_id: 4,
+    first_name : "Gabriel",
+    last_name : "Frattallone"
+  });
+  Patients.insert({
+    join_id: 5,
+    first_name : "Jan",
+    last_name : "Rodriguez"
+  });
+  Patients.insert({
+    join_id: 6,
+    first_name : "Harry",
+    last_name : "Sanabria"
+  });
+  Patients.insert({
+    join_id: 7,
+    first_name : "Joe",
+    last_name : "Johnson"
+  });
+  Patients.insert({
+    join_id: 8,
+    first_name : "Bob",
+    last_name : "Bobbert"
+  });
+}
 
       //Alerts.remove({});
       if (Alerts.find().count() === 0){
@@ -412,4 +418,4 @@
       }
 
     });
-  }
+}
