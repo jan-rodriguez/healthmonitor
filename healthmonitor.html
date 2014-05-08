@@ -1,5 +1,7 @@
 <head>
   <title>Health Monitor</title>
+  <script src="http://code.highcharts.com/highcharts.js"></script>
+  <script src="http://code.highcharts.com/modules/exporting.js"></script>
 </head>
 
 <body>
@@ -74,23 +76,19 @@
 
       <br><br>
       <div id="graphs-wrapper">
-        <div id="graphs">
-          <!-- Add Graph here -->
-        </div>
-          <!-- Add medications graph here -->
-        <div>
-          <br>
+		{{> graphs}}      
+		<div>
           <select id="timeselect" class="form-control">
-            <option value="1">1 year</option>
-            <option value="2">6 months</option>
+            <option value="1 year">1 year</option>
+            <option value="6 months">6 months</option>
+            <option value="1 month">1 month</option>
+            <option value="1 week">1 week</option>
           </select>
-          <br><br><br>
           <div class="center">
-			<div class="inblock width-90-pc medications-div">
+			<div id="medications">
           		{{> medications}}
           	</div>
           </div>
-          <br><br><br>
         </div>
       </div>
     </div>
@@ -99,6 +97,14 @@
 </template>
 
 <!-- /Patient Page Templates -->
+
+
+<template name="graphs">
+	<div id="graphs">
+		<div id="graph-container" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+		<div id="medicines-container" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+	</div>  
+</template>
 
 <!-- Navbar Template -->
 

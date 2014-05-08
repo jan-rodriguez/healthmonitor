@@ -6,6 +6,9 @@ if (Meteor.isClient) {
   Patients = new Meteor.Collection("patients");
   Medications = new Meteor.Collection("medications");
   Alerts = new Meteor.Collection("alerts");
+  Blood_P = new Meteor.Collection("blood_pressure");
+  Weight = new Meteor.Collection("weight");
+  Heart_R = new Meteor.Collection("heart_rate");
 
   Router.map(function () {
     this.route('root', {
@@ -58,15 +61,15 @@ if (Meteor.isClient) {
       }
     }, {only: 'signup'});
 
-      function propComparator(prop) {
-        return function(a, b) {
-          if(a[prop] > b[prop]) {
-            return 1;
-          } else {
-            return -1;
-          }
+    function propComparator(prop) {
+      return function(a, b) {
+        if(a[prop] > b[prop]) {
+          return 1;
+        } else {
+          return -1;
         }
       }
+    }
 
     //Set up autocomplete functionality of search when all users are found
     Meteor.subscribe ("all_patients", function () {
@@ -209,8 +212,310 @@ if (Meteor.isClient) {
     }
   });
 
+  //Graph stuff
+  var selected_metric = 'mmHg';
+
+  function getTimeSelection() {
+    return $("#timeselect").val();
+  }
+  
+  var getPatientData = function (patient, metric, minDate) {
+    if (metric === 'mmHg') {
+      //get blood pressure data
+      var systolic_data = [];
+      var diastolic_data = [];
+
+      Blood_P.find({patient_id: patient.join_id}, {sort: {date: 1}}).forEach( function (e) {
+        if (e.date > minDate) {
+          systolic_data.push([e.date, e.systolic]);
+          diastolic_data.push([e.date, e.diastolic]);
+        }
+      });
+
+      return [{name: 'Systolic', data: systolic_data, color: 'blue'}, {name: 'Diastolic', data: diastolic_data, color: 'red'}];
+    }
+    else if (metric === 'bpm') {
+      //get heart rate data
+      var heart_rate_data = [];
+
+      Heart_R.find({patient_id: patient.join_id}, {sort: {date: 1}}).forEach( function (e) {
+        if (e.date > minDate) {
+          heart_rate_data.push([e.date, e.heart_rate]);
+        }
+      });
+
+      return [{name: 'bpm', data: heart_rate_data}];
+    }
+    else if (metric === 'lbs') {
+      //get weight data
+      var weight_data = [];
+
+      Weight.find({patient_id: patient.join_id}, {sort: {date: 1}}).forEach( function (e) {
+        if (e.date > minDate) {
+          weight_data.push([e.date, e.weight]);
+        }
+      });
+
+      return [{name: 'lbs', data: weight_data}];
+    }
+  }
+
+  var getMedicineData = function (patient, min_date) {
+    var data = [];
+
+    Medications.find({patient_id: patient.join_id}, {sort: {start_date: 1}}).forEach( function (e) {
+      data.push({low: e.start_date, y: e.end_date || Date.UTC(2014, 4, 1), color: 'blue', name: e.name});
+    });
+
+    return data.filter( function(element) {
+      return element.y >= min_date;
+    });
+// console.log(data);
+//   console.log([{
+//             low: Date.UTC(2013, 5, 1),
+//             y: Date.UTC(2014, 4, 1),
+//             color: 'green',
+//             name: 'Tylenol'
+//         }, {
+//             low: Date.UTC(2013, 10, 21),
+//             y: Date.UTC(2014, 3, 28),
+//             color: 'blue',
+//             name: 'Pepto-Bismol'
+//         }]);
+//     return data = [{
+//             low: Date.UTC(2013, 5, 1),
+//             y: Date.UTC(2014, 4, 1),
+//             color: 'green',
+//             name: 'Tylenol'
+//         }, {
+//             low: Date.UTC(2013, 10, 21),
+//             y: Date.UTC(2014, 3, 28),
+//             color: 'blue',
+//             name: 'Pepto-Bismol'
+//         }];
+  };
+
+  var generate_graphs = function (patient) {
+    var xaxis = getTimeSelection();
+    var yaxis = selected_metric;
+    var series;
+    var new_date = new Date(2014, 4);
+
+    switch(xaxis) {
+      case '1 year':
+      new_date.setFullYear(new_date.getFullYear()-1);
+      break;
+      case '6 months':
+      new_date.setFullYear(new_date.getFullYear(), new_date.getMonth()-6);
+      break;
+      case '1 month':
+      new_date.setFullYear(new_date.getFullYear(), new_date.getMonth()-1);
+      break;
+      case '1 week':
+      new_date = new Date(new_date.getTime() - (1000*60*60*24*7));
+      break;
+    }
+
+    var minDate = Date.UTC(new_date.getUTCFullYear(),
+     new_date.getUTCMonth(), 
+     new_date.getUTCDate(),
+     new_date.getUTCHours(),
+     new_date.getUTCMinutes(),
+     new_date.getUTCSeconds());
+
+    var series = getPatientData(patient, yaxis, minDate);
+    var day_offset = 1000*60*60*24;
+
+    if (xaxis === '1 week') {
+      day_offset = 1000*60*60*5;
+    }
+
+    $(function () {
+      $('#graph-container').highcharts({
+        title: {
+          text: '',
+          x: -20 //center
+        },
+        xAxis: {
+          type: 'datetime',
+          min: minDate-day_offset
+        },
+        yAxis: {
+          allowDecimals: false,
+          title: {
+            text: yaxis
+          },
+          plotLines: [{
+            value: 0,
+            width: 1,
+            color: '#808080'
+          }]
+        },
+        tooltip: {
+          valueSuffix: yaxis
+        },
+        legend: {
+          layout: 'vertical',
+          align: 'right',
+          verticalAlign: 'middle',
+          borderWidth: 0
+        },
+        series: series
+      });
+    });
+
+    var today = Date.UTC(2014, 4);
+    var medicine_data = getMedicineData(patient, minDate);
+    var medicines = medicine_data.map(function(element) {return element.name;});
+    var medicines_width = 592;
+    if (yaxis === 'bpm') {
+      medicines_width = 618;
+    }
+    else if (yaxis === 'lbs') {
+      medicines_width = 627;
+    }
+    $('#graphs-wrapper').height(450+25*medicine_data.length);
+    $('#space-container1').html(new Array(5+medicine_data.length).join("<br>"));
+
+    var chart = new Highcharts.Chart({
+
+      chart: {
+        renderTo: 'medicines-container',
+        type: 'bar',
+        height: 40+25*medicine_data.length,
+        width: medicines_width
+      },
+
+      plotOptions: {
+        bar: {
+          pointWidth: 20,
+          dataLabels: {
+            enabled: true,
+            inside: true,
+            borderRadius: 1,
+            borderColor: 'black',
+            formatter: function () {
+              return this.x
+            },
+            style: {
+              color: 'black',
+              fontWeight: 'bold',
+              fontSize: 'larger',
+              textShadow: '-1px 0 white, 0 1px white, 1px 0 white, 0 -1px white'
+            }
+          }
+        }
+      },
+
+      title: {
+        text: null  
+      },
+
+      legend: {
+        enabled: false
+      },
+
+      xAxis: {
+        categories: medicines,
+        labels: {
+          enabled: false
+        },
+        tickLength: 0,
+        lineWidth: 0,
+        offset: 64
+      },
+
+      yAxis: {
+        type: 'datetime',
+        min: minDate,
+        max: today,
+        endOnTick: false,
+        labels: {
+          staggerLines: 1,
+          overflow: 'justify'
+        },
+        title: {
+          enabled: false
+        }
+      },
+
+      tooltip: {
+        formatter: function() {
+          var point = this.point;
+          return '<b>'+ point.category +'</b><br/>'+
+          Highcharts.dateFormat('%b %e, %Y', point.low) + ' - ' +
+          Highcharts.dateFormat('%b %e, %Y', point.y);
+        } 
+      },
+
+      series: [{
+        data: medicine_data
+      }]
+
+    });
+  };
+
+
+  Template.patient_page.rendered = function () {
+    Meteor.subscribe("all_patients", function () {
+      var patient = Patients.findOne({_id: Router.current(true).path.split('/')[2]});
+      generate_graphs(patient);
+
+      $('#timeselect').change(function (e) {
+        generate_graphs(patient);
+        e.preventDefault();
+      });
+
+      $('#bp').click(function (e) {
+        $(this).addClass('selected');
+        $('#hr').removeClass('selected');
+        $('#w').removeClass('selected');
+
+        selected_metric = "mmHg";
+
+        //change graph
+        generate_graphs(patient);
+      });
+
+      $('#bp').mousedown(function(e) {
+        e.preventDefault();
+      });
+
+      $('#hr').click(function (e) {
+        $(this).addClass('selected');
+        $('#bp').removeClass('selected');
+        $('#w').removeClass('selected');
+
+        selected_metric = "bpm";
+
+        //change graph
+        generate_graphs(patient);            
+      });
+
+      $('#hr').mousedown(function(e) {
+        e.preventDefault();
+      });
+
+      $('#w').click(function (e) {
+        $(this).addClass('selected');
+        $('#hr').removeClass('selected');
+        $('#bp').removeClass('selected');
+
+        selected_metric = "lbs";
+
+        //change graph
+        generate_graphs(patient);
+      });
+
+      $('#w').mousedown(function(e) {
+        e.preventDefault();
+      });
+    });
+  };
+
+  //Medication table stuff
   Template.medications.current_medications = function () {
-    if(Router.getData()) {
+    if (Router.getData()) {
       return Medications.find({patient_id: Router.getData().join_id, end_date: null});
     }
     
@@ -272,10 +577,10 @@ if (Meteor.isClient) {
     });
   }
 
-    //Close form for prescribing medication
-    $(document).on('click', function() {
-      $('.trigger').popover('hide');
-    });
+  //Close form for prescribing medication
+  $(document).on('click', function() {
+    $('.trigger').popover('hide');
+  });
 
 }
 
@@ -284,11 +589,162 @@ if (Meteor.isServer) {
     Patients = new Meteor.Collection("patients");
     Medications = new Meteor.Collection("medications");
     Alerts = new Meteor.Collection("alerts");
+    Blood_P = new Meteor.Collection("blood_pressure");
+    Weight = new Meteor.Collection("weight");
+    Heart_R = new Meteor.Collection("heart_rate");
 
     // code to run on server at startup
     Meteor.publish("all_patients", function() {
       return Patients.find();
     });
+
+    //seed vital sign measurements
+    var signal_dates = [Date.UTC(2013, 4), Date.UTC(2013, 5), Date.UTC(2013, 6), Date.UTC(2013, 7), 
+    Date.UTC(2013, 8), Date.UTC(2013, 9), Date.UTC(2013, 10), Date.UTC(2013, 11), 
+    Date.UTC(2014, 0), Date.UTC(2014, 1), Date.UTC(2014, 2), Date.UTC(2014, 3), Date.UTC(2014, 4)];
+
+    // if (Blood_P.find().count() === 0) {
+    //   for (var patient_id = 1; patient_id <= 10; patient_id++) {
+    //     for (var day = 1; day <= 30; day++) {
+    //       var date = new Date(2014, 4, day, 0, 0, 0, 0);
+    //       Blood_P.insert({
+    //         patient_id: patient_id,
+    //         date: date, 
+    //         systolic: Math.random() * (160 - 90) + 90,
+    //         diastolic: Math.random() * (100 - 60) + 60
+    //       });
+    //     }
+
+    //     Blood_P.insert({
+    //       patient_id: patient_id,
+    //       date: new Date(2014, 5, 1, 0, 0, 0, 0), 
+    //       systolic: Math.random() * (160 - 90) + 90,
+    //       diastolic: Math.random() * (100 - 60) + 60
+    //     });
+
+    //     months = [5, 6, 7, 8, 9, 10, 11, 12, 1, 2, 3];
+    //     for (var month = 0; month < months.length; month++) {
+    //       var date = new Date(2014, months[month], 1, 0, 0, 0, 0);
+    //       Blood_P.insert({
+    //         patient_id: patient_id,
+    //         date: date, 
+    //         systolic: Math.random() * (160 - 90) + 90,
+    //         diastolic: Math.random() * (100 - 60) + 60
+    //       });        
+    //     }
+    //   }
+    // }
+
+
+    Blood_P.remove({});
+
+    for (var patient_id = 1; patient_id <= 10; patient_id++) {
+      for (var i = 0; i < signal_dates.length; i++) {
+        Blood_P.insert({
+          patient_id: patient_id,
+          date: signal_dates[i], 
+          systolic: Math.floor(Math.random() * (160 - 90) + 90),
+          diastolic: Math.floor(Math.random() * (100 - 60) + 60)
+        });
+      }
+    }
+
+    Heart_R.remove({});
+
+    for (var patient_id = 1; patient_id <= 10; patient_id++) {
+      for (var i = 0; i < signal_dates.length; i++) {
+        Heart_R.insert({
+          patient_id: patient_id,
+          date: signal_dates[i], 
+          heart_rate: Math.floor(Math.random() * (90 - 50) + 50)
+        });
+      }
+    }
+
+    Weight.remove({});
+
+    for (var patient_id = 1; patient_id <= 10; patient_id++) {
+      for (var i = 0; i < signal_dates.length; i++) {
+        Weight.insert({
+          patient_id: patient_id,
+          date: signal_dates[i], 
+          weight: Math.floor(Math.random() * (250 - 125) + 125)
+        });
+      }
+    }
+
+    // if (Heart_R.find().count() === 0) {
+    //   for (var patient_id = 1; patient_id <= 10; patient_id++) {
+    //     // for (var day = 1; day <= 30; day++) {
+    //     //   var date = new Date(Date.UTC(2014, 4, day));
+    //     //   Heart_R.insert({
+    //     //     patient_id: patient_id,
+    //     //     date: date, 
+    //     //     heart_rate: Math.random() * (90 - 50) + 50
+    //     //   });
+    //     // }
+
+    //     // Heart_R.insert({
+    //     //   patient_id: patient_id,
+    //     //   date: new Date(Date.UTC(2014, 5, 1)), 
+    //     //   heart_rate: Math.random() * (90 - 50) + 50
+    //     // });
+
+    //     var months = [5, 6, 7, 8, 9, 10, 11, 12];
+    //     for (var month = 0; month < months.length; month++) {
+    //       var date = new Date(Date.UTC(2013, months[month]));
+    //       Heart_R.insert({
+    //         patient_id: patient_id,
+    //         date: date, 
+    //         heart_rate: Math.random() * (90 - 50) + 50,
+    //       });        
+    //     }
+    //             Heart_R.insert({
+    //       patient_id: patient_id,
+    //       date: new Date(Date.UTC(2014, 1)), 
+    //       heart_rate: Math.random() * (90 - 50) + 50
+    //     });
+    //             Heart_R.insert({
+    //       patient_id: patient_id,
+    //       date: new Date(Date.UTC(2014, 2)), 
+    //       heart_rate: Math.random() * (90 - 50) + 50
+    //     });
+    //             Heart_R.insert({
+    //       patient_id: patient_id,
+    //       date: new Date(Date.UTC(2014, 3)), 
+    //       heart_rate: Math.random() * (90 - 50) + 50
+    //     });
+    //   }
+    // }
+
+    // if (Weight.find().count() === 0) {
+    //   for (var patient_id = 1; patient_id <= 10; patient_id++) {
+    //     for (var day = 1; day <= 30; day++) {
+    //       var date = new Date(2014, 4, day, 0, 0, 0, 0);
+    //       Weight.insert({
+    //         patient_id: patient_id,
+    //         date: date, 
+    //         weight: Math.random() * (250 - 125) + 125,
+    //       });
+    //     }
+
+    //     Weight.insert({
+    //       patient_id: patient_id,
+    //       date: new Date(2014, 5, 1, 0, 0, 0, 0), 
+    //       weight: Math.random() * (250 - 125) + 125,
+    //     });
+
+    //     months = [5, 6, 7, 8, 9, 10, 11, 12, 1, 2, 3];
+    //     for (var month = 0; month < months.length; month++) {
+    //       var date = new Date(2014, months[month], 1, 0, 0, 0, 0);
+    //       Weight.insert({
+    //         patient_id: patient_id,
+    //         date: date, 
+    //         weight: Math.random() * (250 - 125) + 125,
+    //       });        
+    //     }
+    //   }
+    // }
 
     // Meteor.publish("all_medications", function() {
     //   return Medications.find();
@@ -403,7 +859,7 @@ if (Meteor.isServer) {
         frequency_unit : "hours",
         comment : "",
         reason : "headache",
-        start_date : new Date(2014, 1, 25, 0, 0, 0, 0),
+        start_date : Date.UTC(2013, 5, 1),
         end_date : null
       });
       Medications.insert({
@@ -416,7 +872,7 @@ if (Meteor.isServer) {
         frequency_unit : "days",
         comment : "",
         reason : "high blood pressure",
-        start_date : new Date(2014, 3, 20, 0, 0, 0, 0),
+        start_date : Date.UTC(2013, 5, 1),
         end_date : null
       });
       Medications.insert({
@@ -429,8 +885,8 @@ if (Meteor.isServer) {
         frequency_unit : "hours",
         comment : "",
         reason : "indigestion",
-        start_date : new Date(2013, 1, 15, 0, 0, 0, 0),
-        end_date : new Date(2013, 5, 5, 0, 0, 0, 0)
+        start_date : Date.UTC(2013, 10, 21),
+        end_date : Date.UTC(2014, 3, 28)
       });
       Medications.insert({
         patient_id : 2,
@@ -442,7 +898,7 @@ if (Meteor.isServer) {
         frequency_unit : "days",
         comment : "",
         reason : "high blood pressure",
-        start_date : new Date(2014, 3, 20, 0, 0, 0, 0),
+        start_date : Date.UTC(2014, 3),
         end_date : null
       });
       Medications.insert({
@@ -455,8 +911,8 @@ if (Meteor.isServer) {
         frequency_unit : "hours",
         comment : "",
         reason : "indigestion",
-        start_date : new Date(2013, 1, 15, 0, 0, 0, 0),
-        end_date : new Date(2013, 5, 5, 0, 0, 0, 0)
+        start_date : Date.UTC(2013, 1),
+        end_date : Date.UTC(2013, 5)
       });
     }
   });

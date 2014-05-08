@@ -138,15 +138,44 @@ textarea, .form-horizontal {
 	margin-left: 14px;
 }
 
-/* /Medications */
-
-.width-90-pc {
-	width: 90%;
-}
-
-.medications-div {
+#medications {
+	width: 100%;
 	display: inline-block;
 	border: solid 1px;
 }
 
+/* /Medications */
 
+/* Graphs */
+
+button.selected {
+	background-color: #ddd;
+}
+
+.fixwidth {
+	width: 500px;
+	display: inline-block;
+}
+
+#graphs {
+	width: 698px;
+	height: 400px;
+	margin: 0 auto;
+}
+
+#graphs img {
+	width: inherit;
+	height: inherit;
+	padding: 1 auto;
+}
+
+#graphs-wrapper {
+
+	width: 700px;
+	height: 450px;
+	margin: 0 auto;
+	border: solid 1px;
+
+}
+
+/* /Graphs */
