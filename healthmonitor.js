@@ -1,12 +1,10 @@
 
 if (Meteor.isClient) {
 
-
   currentUser = Meteor.user();
 
   Patients = new Meteor.Collection("patients");
   Medications = new Meteor.Collection("medications");
-  Doctors = new Meteor.Collection("doctors");
   Alerts = new Meteor.Collection("alerts");
 
   Router.map(function () {
@@ -229,36 +227,55 @@ if (Meteor.isClient) {
     },
     'click .edit' : function(e, t) {
   //implement edit
-  }
+    } 
   });
 
-  Template.medication.rendered = function () {
-    $('.popover-markup>.trigger').popover({
-      html: true,
-      title: function () {
-        return $(this).parent().find('.head').html();
-      },
-      content: function () {
-        return $(this).parent().find('.content').html();
-      }
-    }).on('click', function(e) {
-      $('.popover').on('click', function(e) {
-        e.stopPropagation(); 
-      });
-
-      $('.popover').on('click', '#addmed', function(e) {
-        // $('#benadryl').removeClass('hide');
-        $('#prescribe').popover('hide');
+  //
+  Template.medications.rendered = function () {
+      $('.popover-markup>.trigger').popover({
+        html: true,
+        title: function () {
+          return $(this).parent().find('.head').html();
+        },
+        content: function () {
+          return $(this).parent().find('.content').html();
+        }
+      }).on('click', function(e) {
+        $('.popover').on('click', function(e) {
           e.stopPropagation(); 
         });
 
-        e.stopPropagation();
+      $('.popover').on('click', '#add-med', function(e) {
+        e.preventDefault();
+
+        Medications.insert({
+          patient_id : Router.getData().join_id,
+          doctor_id : 1/*this user from join_id*/,
+          name : $('#med-name').val(),
+          dose : $('#med-dose').val(),
+          dose_unit : $('#med-dose-unit').val(),
+          frequency : $('#med-freq').val(),
+          frequency_unit : $('#med-freq-unit').val(),
+          comment : $('#med-comment').val(),
+          reason : $('#med-reason').val(),
+          start_date : new Date(),
+          end_date : null
+        }, function (err) {
+          if (!err) {
+            $('#prescribe').popover('hide');
+          }
+        });
+        e.stopPropagation(); 
       });
 
-    $(document).on('click', function() {
-      $('#prescribe').popover('hide');
+      e.stopPropagation();
     });
-  };
+  }
+
+    //Close form for prescribing medication
+    $(document).on('click', function() {
+      $('.trigger').popover('hide');
+    });
 
 }
 
@@ -266,16 +283,11 @@ if (Meteor.isServer) {
   Meteor.startup(function () {
     Patients = new Meteor.Collection("patients");
     Medications = new Meteor.Collection("medications");
-    Doctors = new Meteor.Collection("doctors");
     Alerts = new Meteor.Collection("alerts");
 
     // code to run on server at startup
-    Meteor.publish("all_patients", function(){
+    Meteor.publish("all_patients", function() {
       return Patients.find();
-    });
-
-    Meteor.publish("all_doctors", function() {
-      return Doctors.find();
     });
 
     // Meteor.publish("all_medications", function() {
@@ -447,19 +459,5 @@ if (Meteor.isServer) {
         end_date : new Date(2013, 5, 5, 0, 0, 0, 0)
       });
     }
-
-    if (Doctors.find().count() === 0) {
-      Doctors.insert({
-        join_id: 1,
-        first_name : "Yes",
-        last_name : "No"
-      });
-      Doctors.insert({
-        join_id: 2,
-        first_name : "Jorge",
-        last_name : "Rosario"
-      });
-    }
-
   });
 }

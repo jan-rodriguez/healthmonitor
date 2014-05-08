@@ -126,15 +126,6 @@ input.norm {
 	height: 28px !important;
 }
 
-.width-90-pc {
-	width: 90%;
-}
-
-.medications-div {
-	display: inline-block;
-	border: solid 1px;
-}
-
 textarea, .form-horizontal {
 	margin-bottom: 10px;
 }
@@ -146,4 +137,16 @@ textarea, .form-horizontal {
 .mar-left {
 	margin-left: 14px;
 }
+
 /* /Medications */
+
+.width-90-pc {
+	width: 90%;
+}
+
+.medications-div {
+	display: inline-block;
+	border: solid 1px;
+}
+
+
