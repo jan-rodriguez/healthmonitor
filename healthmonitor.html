@@ -8,18 +8,6 @@
 </body>
 
 <!-- Search Page Templates -->
-<template name="home">
-  <div id="maindiv">
-    {{> navbar}}
-
-    <div id="contentdiv">
-      <div id="alertdiv">
-        {{> alerts}}
-      </div>
-    </div>
-  </div>
-</template>
-
 <template name="alerts">
   {{#each alert_list}}
     <a class="link-to-patient" href="#">
