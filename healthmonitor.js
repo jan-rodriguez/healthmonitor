@@ -333,7 +333,14 @@ if (Meteor.isClient) {
           }]
         },
         tooltip: {
-          valueSuffix: yaxis
+          enabled: false
+        },
+        plotOptions: {
+            series: {
+                marker: {
+                    radius: 1
+                }
+            }
         },
         legend: {
           layout: 'vertical',
