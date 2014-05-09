@@ -385,9 +385,12 @@ if (Meteor.isClient) {
     }
     $('#graphs-wrapper').height(450+25*medicine_data.length);
     $('#space-container1').html(new Array(5+medicine_data.length).join("<br>"));
+    
+    if (medicine_data.length === 0){
+      return;
+    }
 
     var chart = new Highcharts.Chart({
-
       chart: {
         renderTo: 'medicines-container',
         type: 'bar',
@@ -553,11 +556,46 @@ if (Meteor.isClient) {
   //Medication events - discontinue and edit
   Template.medication.events({
     'click .discontinue' : function(e, t) {
+      e.preventDefault();
       Medications.update(this._id, {end_date : new Date()});
     },
     'click .edit' : function(e, t) {
-  //implement edit
-    } 
+      e.preventDefault();
+      var medication = this;
+      console.log(medication);
+      $('.med-edit-name').val(medication.name);
+      $('.med-edit-dose').val(medication.dose);
+      $('.med-edit-dose-unit').val(medication.dose_unit);
+      $('.med-edit-freq').val(medication.frequency);
+      $('.med-edit-freq-unit').val(medication.frequency_unit);
+      $('.med-edit-comment').val(medication.comment);
+      $('.med-edit-reason').val(medication.reason);
+
+      $('.popover').on('click', function(e) {
+        e.stopPropagation(); 
+      });
+
+      $('.popover').on('click', '.edit-med', function(e) {
+        e.preventDefault();
+        console.log('editt');
+        var updateQuery = {$set: {
+          name : $('.med-edit-name').val(),
+          dose : $('.med-edit-dose').val(),
+          dose_unit : $('.med-edit-dose-unit').val(),
+          frequency : $('.med-edit-freq').val(),
+          frequency_unit : $('.med-edit-freq-unit').val(),
+          comment : $('.med-edit-comment').val(),
+          reason : $('.med-edit-reason').val() }}
+
+          Medications.update(medication._id, updateQuery, function (error) {
+            if (!error) {
+              $('.popover-edit-markup>.trigger').popover('hide');
+            }
+          });
+        e.stopPropagation(); 
+      });
+      e.stopPropagation();
+    }
   });
 
   //Prescribe new medication code, runs once medications has been rendered. 
@@ -575,32 +613,49 @@ if (Meteor.isClient) {
           e.stopPropagation(); 
         });
 
-      $('.popover').on('click', '#add-med', function(e) {
-        e.preventDefault();
+        if (!this.rendered) {
+          $('.popover').on('click', '#add-med', function(e) {
+            e.preventDefault();
+            console.log('added med');
+            Medications.insert({
+              patient_id : Router.getData().join_id,
+              doctor_id : 1/*this user from join_id*/,
+              name : $('#med-name').val(),
+              dose : $('#med-dose').val(),
+              dose_unit : $('#med-dose-unit').val(),
+              frequency : $('#med-freq').val(),
+              frequency_unit : $('#med-freq-unit').val(),
+              comment : $('#med-comment').val(),
+              reason : $('#med-reason').val(),
+              start_date : new Date(),
+              end_date : null
+            }, function (err) {
+                if (!err) {
+                  $('#prescribe').popover('hide');
+                  $('#add-med').unbind('click');
+                }
+              });
+              e.stopPropagation(); 
+          });
+        }
 
-        Medications.insert({
-          patient_id : Router.getData().join_id,
-          doctor_id : 1/*this user from join_id*/,
-          name : $('#med-name').val(),
-          dose : $('#med-dose').val(),
-          dose_unit : $('#med-dose-unit').val(),
-          frequency : $('#med-freq').val(),
-          frequency_unit : $('#med-freq-unit').val(),
-          comment : $('#med-comment').val(),
-          reason : $('#med-reason').val(),
-          start_date : new Date(),
-          end_date : null
-        }, function (err) {
-          if (!err) {
-            $('#prescribe').popover('hide');
-          }
-        });
-        e.stopPropagation(); 
+        this.rendered = true;
+        e.stopPropagation();
       });
+    };
 
-      e.stopPropagation();
-    });
-  }
+  //Edit medication code, runs once medication has been rendered. 
+  Template.medication.rendered = function () {
+      $('.popover-edit-markup>.trigger').popover({
+        html: true,
+        title: function () {
+          return $(this).parent().find('.head').html();
+        },
+        content: function () {
+          return $(this).parent().find('.content').html();
+        }
+      });
+  };
 
   //Close popover for prescribing medication
   $(document).on('click', function() {
@@ -629,76 +684,60 @@ if (Meteor.isServer) {
     //Dummy Data
 
     //seed vital sign measurements
-    var signal_dates = [Date.UTC(2013, 4), Date.UTC(2013, 5), Date.UTC(2013, 6), Date.UTC(2013, 7), 
-    Date.UTC(2013, 8), Date.UTC(2013, 9), Date.UTC(2013, 10), Date.UTC(2013, 11), 
-    Date.UTC(2014, 0), Date.UTC(2014, 1), Date.UTC(2014, 2), Date.UTC(2014, 3), Date.UTC(2014, 4)];
-
-    // if (Blood_P.find().count() === 0) {
-    //   for (var patient_id = 1; patient_id <= 10; patient_id++) {
-    //     for (var day = 1; day <= 30; day++) {
-    //       var date = new Date(2014, 4, day, 0, 0, 0, 0);
-    //       Blood_P.insert({
-    //         patient_id: patient_id,
-    //         date: date, 
-    //         systolic: Math.random() * (160 - 90) + 90,
-    //         diastolic: Math.random() * (100 - 60) + 60
-    //       });
-    //     }
-
-    //     Blood_P.insert({
-    //       patient_id: patient_id,
-    //       date: new Date(2014, 5, 1, 0, 0, 0, 0), 
-    //       systolic: Math.random() * (160 - 90) + 90,
-    //       diastolic: Math.random() * (100 - 60) + 60
-    //     });
-
-    //     months = [5, 6, 7, 8, 9, 10, 11, 12, 1, 2, 3];
-    //     for (var month = 0; month < months.length; month++) {
-    //       var date = new Date(2014, months[month], 1, 0, 0, 0, 0);
-    //       Blood_P.insert({
-    //         patient_id: patient_id,
-    //         date: date, 
-    //         systolic: Math.random() * (160 - 90) + 90,
-    //         diastolic: Math.random() * (100 - 60) + 60
-    //       });        
-    //     }
-    //   }
-    // }
+    var signal_dates = [];
+    var months = [[2013, 4], [2013, 5], [2013, 6], [2013, 7], [2013, 8], [2013, 9], [2013, 10], [2013, 11], [2014, 0], [2014, 1], [2014, 2], [2014, 3]];
+    for (var j = 0; j < 12; j++) {
+      for (var i = 0; i < 31; i++) {
+        var month = months[j];
+        signal_dates.push(Date.UTC(month[0], month[1], i));
+      }
+    }
 
 
     Blood_P.remove({});
 
     for (var patient_id = 1; patient_id <= 10; patient_id++) {
+      var prev_systolic = Math.floor(Math.random() * (160 - 90) + 90);
+      var prev_diastolic = Math.floor(Math.random() * (100 - 60) + 60);
+      var delta = 0;
       for (var i = 0; i < signal_dates.length; i++) {
+        delta = Math.random() * 5 - 2.5;
+        prev_systolic = prev_systolic + delta;
+        delta = Math.random() * 5 - 2.5;
+        prev_diastolic = prev_diastolic + delta;
         Blood_P.insert({
           patient_id: patient_id,
           date: signal_dates[i], 
-          systolic: Math.floor(Math.random() * (160 - 90) + 90),
-          diastolic: Math.floor(Math.random() * (100 - 60) + 60)
+          systolic: prev_systolic,
+          diastolic: prev_diastolic
         });
       }
     }
 
     Heart_R.remove({});
-
     for (var patient_id = 1; patient_id <= 10; patient_id++) {
+      var prev_hr = Math.floor(Math.random() * (90 - 50) + 50);
       for (var i = 0; i < signal_dates.length; i++) {
+        delta = Math.random() * 5 - 2.5;
+        prev_hr = prev_hr + delta;
         Heart_R.insert({
           patient_id: patient_id,
           date: signal_dates[i], 
-          heart_rate: Math.floor(Math.random() * (90 - 50) + 50)
+          heart_rate: prev_hr
         });
       }
     }
 
     Weight.remove({});
-
     for (var patient_id = 1; patient_id <= 10; patient_id++) {
+      var prev_weight = Math.floor(Math.random() * (250 - 125) + 125);
       for (var i = 0; i < signal_dates.length; i++) {
+        delta = Math.random() * 5 - 2.5;
+        prev_weight = prev_weight + delta;
         Weight.insert({
           patient_id: patient_id,
           date: signal_dates[i], 
-          weight: Math.floor(Math.random() * (250 - 125) + 125)
+          weight: prev_weight
         });
       }
     }
@@ -863,7 +902,7 @@ if (Meteor.isServer) {
       });
     }
 
-    Alerts.remove({});
+    // Alerts.remove({});
     if (Alerts.find().count() === 0){
       Alerts.insert({
         message : "High Blood Pressure",
