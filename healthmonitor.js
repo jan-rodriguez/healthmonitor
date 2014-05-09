@@ -289,11 +289,11 @@ if (Meteor.isClient) {
     var data = [];
 
     Medications.find({patient_id: patient.join_id}, {sort: {low: 1}}).forEach( function (e) {
-      data.push({low: e.low, y: e.y || Date.UTC(2014, 4, 1), color: e.color, name: e.name});
+      data.push({low: e.low, y: e.y || Date.UTC(2014, 4), color: e.color, name: e.name});
     });
 
     return data.filter( function(element) {
-      return element.y >= min_date;
+      return element.y >= min_date && element.low != Date.UTC(2014, 4);
     });
   };
 
@@ -622,7 +622,7 @@ if (Meteor.isClient) {
               frequency_unit : $('#med-freq-unit').val(),
               comment : $('#med-comment').val(),
               reason : $('#med-reason').val(),
-              low : new Date(),
+              low : Date.UTC(2014, 4),
               y : null
             }, function (err) {
                 if (!err) {
