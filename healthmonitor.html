@@ -25,7 +25,8 @@
     <a class="link-to-patient" href="#">
       <div class="alerts">
         <button type="button" class="close">X</button>
-        {{message}} 
+        <div class="left">{{patient_alert this.patient_id}}</div> 
+        <div class="right">{{message}}</div>
       </div>
     </a>
   {{/each}}
