@@ -962,7 +962,7 @@ if (Meteor.isServer) {
     if (Medications.find().count() === 0) {
       Medications.insert({
         patient_id : 5,
-        doctor_id : 2,
+        doctor_name : "Tran",
         name : "Tylenol",
         dose : 50,
         dose_unit : "mg",
@@ -976,7 +976,7 @@ if (Meteor.isServer) {
       });
       Medications.insert({
         patient_id : 5,
-        doctor_id : 2,
+        doctor_name : "Jones",
         name : "Advil",
         dose : 50,
         dose_unit : "mg",
@@ -990,7 +990,7 @@ if (Meteor.isServer) {
       });
       Medications.insert({
         patient_id : 5,
-        doctor_id : 2,
+        doctor_name : "Rosario",
         name : "Robitussin",
         dose : 50,
         dose_unit : "ml",
@@ -1004,7 +1004,7 @@ if (Meteor.isServer) {
       });
       Medications.insert({
         patient_id : 1,
-        doctor_id : 1,
+        doctor_name : "Jekyll",
         name : "Advil",
         dose : 150,
         dose_unit : "mg",
@@ -1018,7 +1018,7 @@ if (Meteor.isServer) {
       });
       Medications.insert({
         patient_id : 1,
-        doctor_id : 1,
+        doctor_name : "Pepper",
         name : "Pepto Bismol",
         dose : 150,
         dose_unit : "ml",
@@ -1032,7 +1032,7 @@ if (Meteor.isServer) {
       });
       Medications.insert({
         patient_id : 2,
-        doctor_id : 2,
+        doctor_name : "Seuss",
         name : "Advil",
         dose : 150,
         dose_unit : "mg",
@@ -1046,7 +1046,7 @@ if (Meteor.isServer) {
       });
       Medications.insert({
         patient_id : 3,
-        doctor_id : 2,
+        doctor_name : "Who",
         name : "Pepto Bismol",
         dose : 150,
         dose_unit : "ml",
