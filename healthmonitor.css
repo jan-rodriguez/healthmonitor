@@ -60,6 +60,12 @@ input[type=password], input[type=email] {
     height: 28px !important;
     margin-bottom: 15px !important;
 }
+
+.input-text {
+	height: 28px !important;
+    margin-bottom: 15px !important;
+}
+
 /* /Login */
 
 /* Navbar */
