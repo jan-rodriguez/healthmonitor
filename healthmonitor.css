@@ -148,17 +148,21 @@ textarea, .form-horizontal {
 }
 
 .mar-right {
-	margin-right: 14px;
+	margin-right: 17px;
 }
 
 .mar-left {
-	margin-left: 14px;
+	margin-left: 17px;
 }
 
 #medications {
 	width: 100%;
 	display: inline-block;
 	border: solid 1px;
+}
+
+.gray {
+	background-color: #ddd;
 }
 
 /* /Medications */

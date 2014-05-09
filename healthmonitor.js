@@ -547,12 +547,6 @@ if (Meteor.isClient) {
     }
   };
 
-  //Get prescribing doctor's name for this medication
-  Template.medication.doctor_name = function () {
-
-    // console.log(Doctors.find({join_id: this.doctor_id}));
-  };
-
   //Medication events - discontinue and edit
   Template.medication.events({
     'click .discontinue' : function(e, t) {
@@ -563,39 +557,40 @@ if (Meteor.isClient) {
       e.preventDefault();
       var medication = this;
 
-      $('.med-edit-name').val(medication.name);
-      $('.med-edit-dose').val(medication.dose);
-      $('.med-edit-dose-unit').val(medication.dose_unit);
-      $('.med-edit-freq').val(medication.frequency);
-      $('.med-edit-freq-unit').val(medication.frequency_unit);
-      $('.med-edit-comment').val(medication.comment);
-      $('.med-edit-reason').val(medication.reason);
+      $('#med-edit-name-' + medication._id).val(medication.name);
+      $('#med-edit-dose-' + medication._id).val(medication.dose);
+      $('#med-edit-dose-unit-' + medication._id).val(medication.dose_unit);
+      $('#med-edit-freq-' + medication._id).val(medication.frequency);
+      $('#med-edit-freq-unit-' + medication._id).val(medication.frequency_unit);
+      $('#med-edit-comment-' + medication._id).val(medication.comment);
+      $('#med-edit-reason-' + medication._id).val(medication.reason);
 
       $('.popover').on('click', function(e) {
         e.stopPropagation(); 
       });
 
       if (!this.rendered) {
-        $('.popover').on('click', '.edit-med', function(e) {
+        $('.popover').on('submit', '#medication-edit-form-' + medication._id, function(e) {
           e.preventDefault();
-          console.log("click");
-          console.log(medication.name);
-          console.log($('.med-edit-name').val());
-          var updateQuery = {$set: {
-            name : $('.med-edit-name').val(),
-            dose : $('.med-edit-dose').val(),
-            dose_unit : $('.med-edit-dose-unit').val(),
-            frequency : $('.med-edit-freq').val(),
-            frequency_unit : $('.med-edit-freq-unit').val(),
-            comment : $('.med-edit-comment').val(),
-            reason : $('.med-edit-reason').val() }}
-
-            Medications.update(medication._id, updateQuery, function (error) {
-              if (!error) {
-                $('.popover-edit-markup>.trigger').popover('hide');
-              }
-            });
           e.stopPropagation(); 
+
+          var updateQuery = {$set: {
+            name : $('#med-edit-name-' + medication._id).val(),
+            dose : $('#med-edit-dose-' + medication._id).val(),
+            dose_unit : $('#med-edit-dose-unit-' + medication._id).val(),
+            frequency : $('#med-edit-freq-' + medication._id).val(),
+            frequency_unit : $('#med-edit-freq-unit-' + medication._id).val(),
+            comment : $('#med-edit-comment-' + medication._id).val(),
+            reason : $('#med-edit-reason-' + medication._id).val() }}
+            console.log(updateQuery);
+            console.log($('#med-edit-comment-' + medication._id).val());
+            
+          Medications.update(medication._id, updateQuery, function (error) {
+              if (!error) {
+                console.log('no error');
+                $('.popover-edit-markup>.trigger').popover('hide');
+              } else { console.log("error");}
+            });
         });
       }
 
@@ -615,13 +610,16 @@ if (Meteor.isClient) {
           return $(this).parent().find('.content').html();
         }
       }).on('click', function(e) {
+        $('.trigger').not(this).popover('hide');
+
         $('.popover').on('click', function(e) {
           e.stopPropagation(); 
         });
 
         if (!this.rendered) {
-          $('.popover').on('click', '#add-med', function(e) {
+          $('.popover').on('submit', '#medication-add-form', function(e) {
             e.preventDefault();
+            e.stopPropagation(); 
 
             Medications.insert({
               patient_id : Router.getData().join_id,
@@ -641,7 +639,6 @@ if (Meteor.isClient) {
                   $('#add-med').unbind('click');
                 }
               });
-              e.stopPropagation(); 
           });
         }
 
@@ -660,6 +657,8 @@ if (Meteor.isClient) {
         content: function () {
           return $(this).parent().find('.content').html();
         }
+      }).on('click', function(e) {
+        $('.trigger').not(this).popover('hide');
       });
   };
 
