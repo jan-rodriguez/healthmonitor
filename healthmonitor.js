@@ -118,8 +118,6 @@ if (Meteor.isClient) {
 
         var name = $('#search').val();
 
-        console.log(name);
-
         //Run trough list if we find a match, go to the page
         if (name.length > 0) {
           pat_list.forEach( function (elt) {
@@ -194,6 +192,8 @@ if (Meteor.isClient) {
       var email = t.find('#signup-email').value;
       var password = t.find('#signup-password').value;
       var confirm_password = t.find('#signup-confirm-password').value;
+      var first_name = t.find('#signup-first-name').value;
+      var last_name = t.find('#signup-last-name').value;
       $('#signup-error').html('');
 
       if (password != confirm_password) {
@@ -203,7 +203,7 @@ if (Meteor.isClient) {
         return false;
       } 
 
-      Accounts.createUser({email: email, password : password}, function(err){
+      Accounts.createUser({email: email, password : password, profile : {first_name : first_name, last_name : last_name}}, function(err){
         if (err) {
           var email_val = $('#signup-email').val();
           $('#signup-error').html('<div class="alert alert-warning error">' + email_val + ' is already in use</div>');
@@ -287,12 +287,12 @@ if (Meteor.isClient) {
   var getMedicineData = function (patient, min_date) {
     var data = [];
 
-    Medications.find({patient_id: patient.join_id}, {sort: {start_date: 1}}).forEach( function (e) {
-      data.push({low: e.start_date, y: e.end_date || Date.UTC(2014, 4, 1), color: 'blue', name: e.name});
+    Medications.find({patient_id: patient.join_id}, {sort: {low: 1}}).forEach( function (e) {
+      data.push({low: e.low, y: e.y || Date.UTC(2014, 4), color: e.color, name: e.name});
     });
 
     return data.filter( function(element) {
-      return element.y >= min_date;
+      return element.y >= min_date && element.low != Date.UTC(2014, 4);
     });
   };
 
@@ -543,7 +543,7 @@ if (Meteor.isClient) {
   //Medication table - get current medications for this patient
   Template.medications.current_medications = function () {
     if (Router.getData()) {
-      return Medications.find({patient_id: Router.getData().join_id, end_date: null});
+      return Medications.find({patient_id: Router.getData().join_id, y: null});
     }
   };
 
@@ -551,7 +551,7 @@ if (Meteor.isClient) {
   Template.medication.events({
     'click .discontinue' : function(e, t) {
       e.preventDefault();
-      Medications.update(this._id, {end_date : new Date()});
+      Medications.update(this._id, {y : new Date()});
     },
     'click .edit' : function(e, t) {
       e.preventDefault();
@@ -620,10 +620,10 @@ if (Meteor.isClient) {
           $('.popover').on('submit', '#medication-add-form', function(e) {
             e.preventDefault();
             e.stopPropagation(); 
-
+            
             Medications.insert({
               patient_id : Router.getData().join_id,
-              doctor_id : 1/*this user from join_id*/,
+              doctor_name : Meteor.user().profile.last_name,
               name : $('#med-name').val(),
               dose : $('#med-dose').val(),
               dose_unit : $('#med-dose-unit').val(),
@@ -631,8 +631,8 @@ if (Meteor.isClient) {
               frequency_unit : $('#med-freq-unit').val(),
               comment : $('#med-comment').val(),
               reason : $('#med-reason').val(),
-              start_date : new Date(),
-              end_date : null
+              low : Date.UTC(2014, 4),
+              y : null
             }, function (err) {
                 if (!err) {
                   $('#prescribe').popover('hide');
@@ -684,6 +684,13 @@ if (Meteor.isServer) {
     //Publish all patients
     Meteor.publish("all_patients", function() {
       return Patients.find();
+    });
+
+    Accounts.onCreateUser(function(options, user) {
+    // [...]
+      if (options.profile)
+        user.profile = options.profile;
+      return user;
     });
 
     //Dummy Data
@@ -965,11 +972,11 @@ if (Meteor.isServer) {
       });
     }
 
-    // Medications.remove({});
+    Medications.remove({});
     if (Medications.find().count() === 0) {
       Medications.insert({
         patient_id : 5,
-        doctor_id : 2,
+        doctor_name : "Tran",
         name : "Tylenol",
         dose : 50,
         dose_unit : "mg",
@@ -977,12 +984,41 @@ if (Meteor.isServer) {
         frequency_unit : "hours",
         comment : "",
         reason : "headache",
-        start_date : Date.UTC(2013, 5, 1),
-        end_date : null
+        low : Date.UTC(2013, 5),
+        y : null,
+        color: "red"
+      });
+      Medications.insert({
+        patient_id : 5,
+        doctor_name : "Jones",
+        name : "Advil",
+        dose : 50,
+        dose_unit : "mg",
+        frequency : 24,
+        frequency_unit : "hours",
+        comment : "",
+        reason : "pains",
+        low : Date.UTC(2013, 10),
+        y : Date.UTC(2013, 11),
+        color: "blue"
+      });
+      Medications.insert({
+        patient_id : 5,
+        doctor_name : "Rosario",
+        name : "Robitussin",
+        dose : 50,
+        dose_unit : "ml",
+        frequency : 24,
+        frequency_unit : "hours",
+        comment : "",
+        reason : "cold",
+        low : Date.UTC(2014, 2),
+        y : Date.UTC(2013, 4, 20),
+        color: "purple"
       });
       Medications.insert({
         patient_id : 1,
-        doctor_id : 1,
+        doctor_name : "Jekyll",
         name : "Advil",
         dose : 150,
         dose_unit : "mg",
@@ -990,12 +1026,13 @@ if (Meteor.isServer) {
         frequency_unit : "days",
         comment : "",
         reason : "high blood pressure",
-        start_date : Date.UTC(2013, 5, 1),
-        end_date : null
+        low : Date.UTC(2013, 5, 1),
+        y : null,
+        color: "blue"
       });
       Medications.insert({
         patient_id : 1,
-        doctor_id : 1,
+        doctor_name : "Pepper",
         name : "Pepto Bismol",
         dose : 150,
         dose_unit : "ml",
@@ -1003,12 +1040,13 @@ if (Meteor.isServer) {
         frequency_unit : "hours",
         comment : "",
         reason : "indigestion",
-        start_date : Date.UTC(2013, 10, 21),
-        end_date : Date.UTC(2014, 3, 28)
+        low : Date.UTC(2013, 10, 21),
+        y : Date.UTC(2014, 3, 28),
+        color: "pink"
       });
       Medications.insert({
         patient_id : 2,
-        doctor_id : 2,
+        doctor_name : "Seuss",
         name : "Advil",
         dose : 150,
         dose_unit : "mg",
@@ -1016,12 +1054,13 @@ if (Meteor.isServer) {
         frequency_unit : "days",
         comment : "",
         reason : "high blood pressure",
-        start_date : Date.UTC(2014, 3),
-        end_date : null
+        low : Date.UTC(2014, 3),
+        y : null,
+        color: "blue"
       });
       Medications.insert({
         patient_id : 3,
-        doctor_id : 2,
+        doctor_name : "Who",
         name : "Pepto Bismol",
         dose : 150,
         dose_unit : "ml",
@@ -1029,8 +1068,9 @@ if (Meteor.isServer) {
         frequency_unit : "hours",
         comment : "",
         reason : "indigestion",
-        start_date : Date.UTC(2013, 1),
-        end_date : Date.UTC(2013, 5)
+        low : Date.UTC(2013, 1),
+        y : Date.UTC(2013, 5),
+        color: "pink"
       });
     }
   });

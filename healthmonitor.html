@@ -78,14 +78,15 @@
       <div id="graphs-wrapper">
 		{{> graphs}}      
 		<div>
-	<br><br><br><br><br>
+        <div id="space-container1">
+        </div>
           <select id="timeselect" class="form-control">
             <option value="1 year">1 year</option>
             <option value="6 months">6 months</option>
             <option value="1 month">1 month</option>
             <option value="1 week">1 week</option>
           </select>
-	<br>
+	<br><br>
           <div class="center">
 			<div id="medications">
           		{{> medications}}
@@ -216,10 +217,14 @@
 			<form id="signup-form" action="action">
 		    	<div class="controls">
 		    		<div id="signup-error"></div>
+            <input type="first_name" id="signup-first-name" class="form-control mar-bot-15" placeholder="first name" required>
+            <br>
+            <input type="last_name" id="signup-last-name" class="form-control mar-bot-15" placeholder="last name" required>
+            <br>
 		        	<input type="email" id="signup-email" class="form-control mar-bot-15" placeholder="email" required>
 			    	<br>
 		        	<input type="password" id="signup-password" class="form-control mar-bot-15" placeholder="password" required>
-		        	<br>
+		        <br>
 		        	<input type="password" id="signup-confirm-password" class="form-control mar-bot-15" placeholder="confirm password" required>
 		    	</div>
 		    	<input type="submit" id="create-account" class="btn btn-primary pull-left" value="Sign up" />
@@ -325,7 +330,7 @@
 		<td><a href="#" class="disabled discontinue">discontinue</a></td>
 		<td>{{name}}</td>
 		<td>{{dose}} {{dose_unit}} every {{frequency}} {{frequency_unit}}</td>
-		<td>Dr. {{doctor_name doctor_id}}</td>
+		<td>Dr. {{doctor_name}}</td>
 		<td>{{reason}}</td>
 		<td>{{comment}}</td>
 	</tr>
