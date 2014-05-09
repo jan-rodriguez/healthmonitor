@@ -627,7 +627,7 @@ if (Meteor.isClient) {
               frequency_unit : $('#med-freq-unit').val(),
               comment : $('#med-comment').val(),
               reason : $('#med-reason').val(),
-              low : new Date(),
+              low : new Date(2014, 4),
               y : null
             }, function (err) {
                 if (!err) {
