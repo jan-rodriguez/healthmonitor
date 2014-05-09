@@ -89,7 +89,7 @@ if (Meteor.isClient) {
       $('#search').autocomplete({
         source : pat_list,
         select : function (event, ui) {
-          window.location = "patient/" + ui.item.val;
+          window.location = "/patient/" + ui.item.val;
           event.preventDefault();
         }
       });
@@ -104,7 +104,7 @@ if (Meteor.isClient) {
           if (name.length > 0){
             pat_list.forEach( function (elt) {
               if ( name.toLowerCase() === elt.label.toLowerCase() ){
-                window.location = "patient/" + elt.val;
+                window.location = "/patient/" + elt.val;
                 return false;
               }
             });
@@ -120,7 +120,7 @@ if (Meteor.isClient) {
         if (name.length > 0) {
           pat_list.forEach( function (elt) {
             if ( name.toLowerCase() === elt.label.toLowerCase() ) {
-              window.location = "patient/" + elt.val;
+              window.location = "/patient/" + elt.val;
               return false;
             }
           });
@@ -143,7 +143,7 @@ if (Meteor.isClient) {
     },
     'click .link-to-patient' : function (e) {
       var id = Patients.findOne({join_id: parseInt(this.patient_id)})._id;
-      window.location = 'patient/' + id;
+      window.location = "/patient/" + id;
       e.preventDefault(); 
     }
   });
@@ -167,7 +167,7 @@ if (Meteor.isClient) {
           $('#login-error').html('<div class="alert alert-warning error">Your username or password was incorrect</div>');
           $('#login-password').val('');
         } else {
-          window.location = '/';
+          window.location = "/";
         }
       });
       return false; 
@@ -217,7 +217,7 @@ if (Meteor.isClient) {
     },
     'click #home-button' : function(e, t) {
       e.preventDefault();
-      window.location = '/';
+      window.location = "/";
     }
   });
 
@@ -504,6 +504,20 @@ if (Meteor.isClient) {
     });
   };
 
+  //Display all alerts for a patient not dismissed before
+  Template.patient_alerts.alert_list = function () {
+    return Alerts.find({show : 1, patient_id: this.join_id});
+  };
+
+  //Dismiss alerts in patient page
+  Template.patient_alerts.events({
+    'click .close' : function (e) {
+      //Make alerts do not show whenever they are dismissed and refreshed
+      Alerts.update (this._id, {show : 0});
+      e.preventDefault();
+    }
+  });
+
   //Medication table - get current medications for this patient
   Template.medications.current_medications = function () {
     if (Router.getData()) {
@@ -513,7 +527,7 @@ if (Meteor.isClient) {
 
   //Get prescribing doctor's name for this medication
   Template.medication.doctor_name = function () {
-    
+
     // console.log(Doctors.find({join_id: this.doctor_id}));
   };
 
@@ -830,7 +844,7 @@ if (Meteor.isServer) {
       });
     }
 
-    //Alerts.remove({});
+    Alerts.remove({});
     if (Alerts.find().count() === 0){
       Alerts.insert({
         message : "A wild Gabo appeared",

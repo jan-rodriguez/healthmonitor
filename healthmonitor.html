@@ -41,7 +41,9 @@
 
     {{> navbar}}
 
-    <br>
+    <div id="patient_alerts">
+	{{> patient_alerts}}
+  	</div>
 
     <div id="contentdiv">
       <table id="patientinfo">
@@ -76,7 +78,7 @@
       <div id="graphs-wrapper">
 		{{> graphs}}      
 		<div>
-	<br><br><br>
+	<br><br><br><br><br>
           <select id="timeselect" class="form-control">
             <option value="1 year">1 year</option>
             <option value="6 months">6 months</option>
@@ -94,6 +96,15 @@
     </div>
   </div>
 
+</template>
+
+<template name="patient_alerts">
+  {{#each alert_list}}
+  	<div class="alerts">
+    	<button type="button" class="close">X</button>
+    	{{message}} 
+  	</div>
+  {{/each}}
 </template>
 
 <!-- /Patient Page Templates -->
@@ -280,7 +291,11 @@
 
 <template name="medication">
 	<tr>
-		<td><a href="#" class="disabled edit">edit</a></td>
+		<td>
+			<div class="popover-markup"> 
+				<a href="#" class="disabled edit">edit</a>
+			</div>
+		</td>
 		<td><a href="#" class="disabled discontinue">discontinue</a></td>
 		<td>{{name}}</td>
 		<td>{{dose}} {{dose_unit}} every {{frequency}} {{frequency_unit}}</td>

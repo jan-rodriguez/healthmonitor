@@ -85,6 +85,11 @@ input[type=password], input[type=email] {
 	margin: auto;
 }
 
+#patient_alerts {
+	width: 800px;
+	margin: 0 auto;
+}
+
 /* /Patient Page */
 
 /* Medications */
