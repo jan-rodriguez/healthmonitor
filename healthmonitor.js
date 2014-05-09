@@ -288,7 +288,7 @@ if (Meteor.isClient) {
     var data = [];
 
     Medications.find({patient_id: patient.join_id}, {sort: {low: 1}}).forEach( function (e) {
-      data.push({low: e.low, y: e.y || Date.UTC(2014, 4, 1), color: e.color, name: e.name});
+      data.push({low: e.low, y: e.y || Date.UTC(2014, 4), color: e.color, name: e.name});
     });
 
     return data.filter( function(element) {
