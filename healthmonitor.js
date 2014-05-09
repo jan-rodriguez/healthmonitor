@@ -118,8 +118,6 @@ if (Meteor.isClient) {
 
         var name = $('#search').val();
 
-        console.log(name);
-
         //Run trough list if we find a match, go to the page
         if (name.length > 0) {
           pat_list.forEach( function (elt) {
@@ -194,7 +192,8 @@ if (Meteor.isClient) {
       var email = t.find('#signup-email').value;
       var password = t.find('#signup-password').value;
       var confirm_password = t.find('#signup-confirm-password').value;
-      var name = t.find('#signup-name').value;
+      var first_name = t.find('#signup-first-name').value;
+      var last_name = t.find('#signup-last-name').value;
       $('#signup-error').html('');
 
       if (password != confirm_password) {
@@ -204,7 +203,7 @@ if (Meteor.isClient) {
         return false;
       } 
 
-      Accounts.createUser({email: email, password : password, profile : {name : name}}, function(err){
+      Accounts.createUser({email: email, password : password, profile : {first_name : first_name, last_name : last_name}}, function(err){
         if (err) {
           var email_val = $('#signup-email').val();
           $('#signup-error').html('<div class="alert alert-warning error">' + email_val + ' is already in use</div>');
@@ -557,7 +556,6 @@ if (Meteor.isClient) {
     'click .edit' : function(e, t) {
       e.preventDefault();
       var medication = this;
-      console.log(medication);
       $('.med-edit-name').val(medication.name);
       $('.med-edit-dose').val(medication.dose);
       $('.med-edit-dose-unit').val(medication.dose_unit);
@@ -572,7 +570,6 @@ if (Meteor.isClient) {
 
       $('.popover').on('click', '.edit-med', function(e) {
         e.preventDefault();
-        console.log('editt');
         var updateQuery = {$set: {
           name : $('.med-edit-name').val(),
           dose : $('.med-edit-dose').val(),
@@ -611,10 +608,9 @@ if (Meteor.isClient) {
         if (!this.rendered) {
           $('.popover').on('click', '#add-med', function(e) {
             e.preventDefault();
-            console.log(Meteor.user().profile.name);
             Medications.insert({
               patient_id : Router.getData().join_id,
-              doctor_name : Meteor.user().profile.name,
+              doctor_name : Meteor.user().profile.last_name,
               name : $('#med-name').val(),
               dose : $('#med-dose').val(),
               dose_unit : $('#med-dose-unit').val(),
@@ -679,7 +675,6 @@ if (Meteor.isServer) {
     Accounts.onCreateUser(function(options, user) {
     // [...]
       if (options.profile)
-        console.log(options.profile);
         user.profile = options.profile;
       return user;
     });

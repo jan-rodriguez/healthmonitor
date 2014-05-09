@@ -218,7 +218,9 @@
 			<form id="signup-form" action="action">
 		    	<div class="controls">
 		    		<div id="signup-error"></div>
-            <input type="name" id="signup-name" class="form-control mar-bot-15" placeholder="name" required>
+            <input type="first_name" id="signup-first-name" class="form-control mar-bot-15" placeholder="first name" required>
+            <br>
+            <input type="last_name" id="signup-last-name" class="form-control mar-bot-15" placeholder="last name" required>
             <br>
 		        	<input type="email" id="signup-email" class="form-control mar-bot-15" placeholder="email" required>
 			    	<br>
@@ -329,7 +331,7 @@
 		<td><a href="#" class="disabled discontinue">discontinue</a></td>
 		<td>{{name}}</td>
 		<td>{{dose}} {{dose_unit}} every {{frequency}} {{frequency_unit}}</td>
-		<td>Dr. {{doctor_name doctor_id}}</td>
+		<td>Dr. {{doctor_name}}</td>
 		<td>{{reason}}</td>
 		<td>{{comment}}</td>
 	</tr>
