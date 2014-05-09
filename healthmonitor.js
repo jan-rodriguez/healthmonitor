@@ -83,58 +83,58 @@ if (Meteor.isClient) {
         });
       });
 
-    //Sort names
-    pat_list.sort(propComparator("label"));
+      //Sort names
+      pat_list.sort(propComparator("label"));
 
-    $('#search').autocomplete({
-      source : pat_list,
-      select : function (event, ui) {
-        Router.go("/patient/" + ui.item.val);
-        event.preventDefault();
-      }
-    });
+      $('#search').autocomplete({
+        source : pat_list,
+        select : function (event, ui) {
+          Router.go("/patient/" + ui.item.val);
+          event.preventDefault();
+        }
+      });
 
-    $('#search').keypress(function (e) {
-      //If user presses enter
-      if (e.keyCode === 13) {
+      $('#search').keypress(function (e) {
+        //If user presses enter
+        if (e.keyCode === 13) {
 
-        var name = $(this).val();
+          var name = $(this).val();
+
+          //Run trough list if we find a match, go to the page
+          if (name.length > 0){
+            pat_list.forEach( function (elt) {
+              if ( name.toLowerCase() === elt.label.toLowerCase() ){
+                Router.go("/patient/" + elt.val);
+                return false;
+              }
+            });
+          }
+        }
+      });
+
+      $('#go').click( function (evt) {
+
+        var name = $('#search').val();
 
         //Run trough list if we find a match, go to the page
-        if (name.length > 0){
+        if (name.length > 0) {
           pat_list.forEach( function (elt) {
-            if ( name.toLowerCase() === elt.label.toLowerCase() ){
+            if ( name.toLowerCase() === elt.label.toLowerCase() ) {
               Router.go("/patient/" + elt.val);
               return false;
             }
           });
         }
-      }
-    });
-
-    $('#go').click( function (evt) {
-
-      var name = $('#search').val();
-
-      //Run trough list if we find a match, go to the page
-      if (name.length > 0){
-        pat_list.forEach( function (elt) {
-          if ( name.toLowerCase() === elt.label.toLowerCase() ){
-            Router.go("/patient/" + elt.val);
-            return false;
-          }
-        });
-      }
-
       });
     });
-
   });
 
+  //Show alerts that have not been previously dismissed
   Template.alerts.alert_list = function () {
     return Alerts.find({show : 1});
   };
 
+  //Functionality for dismissing alerts
   Template.alerts.events({
     'click .close' : function (e) {
       //Make alerts do not show whenever they are dismissed and refreshed
@@ -143,12 +143,12 @@ if (Meteor.isClient) {
     }
   });
 
-  //Compare current path
+  //Compare given path to current path
   UI.registerHelper("currentPage", function(localPath) {
     return Router.current(true).path === localPath;
   });
 
-  //Process Log in request. 
+  //Process Log in request
   Template.login.events({
     'submit #login-form' : function(e, t) {
       e.preventDefault();
@@ -169,7 +169,7 @@ if (Meteor.isClient) {
     }
   });
 
-  //Process Sign up request. 
+  //Process Sign up request
   Template.signup.events({
     'submit #signup-form' : function(e, t) {
       e.preventDefault();
@@ -201,7 +201,7 @@ if (Meteor.isClient) {
     }
   });
 
-  //Process Logout request. 
+  //Process Logout request
   Template.navbar.events({
     'click #logout' : function(e, t) {
       e.preventDefault();
@@ -212,13 +212,15 @@ if (Meteor.isClient) {
     }
   });
 
-  //Graph stuff
+  //Everything to do with graphs
   var selected_metric = 'mmHg';
 
+  //Get selected time scale
   function getTimeSelection() {
     return $("#timeselect").val();
   }
   
+  //Get health information for given patient and dates
   var getPatientData = function (patient, metric, minDate) {
     if (metric === 'mmHg') {
       //get blood pressure data
@@ -260,6 +262,7 @@ if (Meteor.isClient) {
     }
   }
 
+  //Get medicine information for given patient and dates
   var getMedicineData = function (patient, min_date) {
     var data = [];
 
@@ -270,31 +273,9 @@ if (Meteor.isClient) {
     return data.filter( function(element) {
       return element.y >= min_date;
     });
-// console.log(data);
-//   console.log([{
-//             low: Date.UTC(2013, 5, 1),
-//             y: Date.UTC(2014, 4, 1),
-//             color: 'green',
-//             name: 'Tylenol'
-//         }, {
-//             low: Date.UTC(2013, 10, 21),
-//             y: Date.UTC(2014, 3, 28),
-//             color: 'blue',
-//             name: 'Pepto-Bismol'
-//         }]);
-//     return data = [{
-//             low: Date.UTC(2013, 5, 1),
-//             y: Date.UTC(2014, 4, 1),
-//             color: 'green',
-//             name: 'Tylenol'
-//         }, {
-//             low: Date.UTC(2013, 10, 21),
-//             y: Date.UTC(2014, 3, 28),
-//             color: 'blue',
-//             name: 'Pepto-Bismol'
-//         }];
   };
 
+  //Generate graphs for given patient
   var generate_graphs = function (patient) {
     var xaxis = getTimeSelection();
     var yaxis = selected_metric;
@@ -456,6 +437,7 @@ if (Meteor.isClient) {
   };
 
 
+  //Bind events and render graphs when patient page is ready
   Template.patient_page.rendered = function () {
     Meteor.subscribe("all_patients", function () {
       var patient = Patients.findOne({_id: Router.current(true).path.split('/')[2]});
@@ -513,19 +495,19 @@ if (Meteor.isClient) {
     });
   };
 
-  //Medication table stuff
+  //Medication table - get current medications for this patient
   Template.medications.current_medications = function () {
     if (Router.getData()) {
       return Medications.find({patient_id: Router.getData().join_id, end_date: null});
     }
-    
   };
 
-  //not working
+  //Get prescribing doctor's name for this medication
   Template.medication.doctor_name = function () {
     // console.log(Doctors.find({join_id: this.doctor_id}));
   };
 
+  //Medication events - discontinue and edit
   Template.medication.events({
     'click .discontinue' : function(e, t) {
       Medications.update(this._id, {end_date : new Date()});
@@ -535,7 +517,7 @@ if (Meteor.isClient) {
     } 
   });
 
-  //
+  //Prescribe new medication code, runs once medications has been rendered. 
   Template.medications.rendered = function () {
       $('.popover-markup>.trigger').popover({
         html: true,
@@ -577,15 +559,18 @@ if (Meteor.isClient) {
     });
   }
 
-  //Close form for prescribing medication
+  //Close popover for prescribing medication
   $(document).on('click', function() {
     $('.trigger').popover('hide');
   });
 
 }
 
+
+
 if (Meteor.isServer) {
   Meteor.startup(function () {
+
     Patients = new Meteor.Collection("patients");
     Medications = new Meteor.Collection("medications");
     Alerts = new Meteor.Collection("alerts");
@@ -593,10 +578,12 @@ if (Meteor.isServer) {
     Weight = new Meteor.Collection("weight");
     Heart_R = new Meteor.Collection("heart_rate");
 
-    // code to run on server at startup
+    //Publish all patients
     Meteor.publish("all_patients", function() {
       return Patients.find();
     });
+
+    //Dummy Data
 
     //seed vital sign measurements
     var signal_dates = [Date.UTC(2013, 4), Date.UTC(2013, 5), Date.UTC(2013, 6), Date.UTC(2013, 7), 
