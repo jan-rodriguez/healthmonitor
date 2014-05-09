@@ -292,7 +292,7 @@ if (Meteor.isClient) {
     });
 
     return data.filter( function(element) {
-      return element.y >= min_date && element.low !=  Date.UTC(2014, 4);
+      return element.y >= min_date && element.low != Date.UTC(2014, 4);
     });
   };
 
@@ -627,7 +627,7 @@ if (Meteor.isClient) {
               frequency_unit : $('#med-freq-unit').val(),
               comment : $('#med-comment').val(),
               reason : $('#med-reason').val(),
-              low : new Date(2014, 4),
+              low : Date.UTC(2014, 4),
               y : null
             }, function (err) {
                 if (!err) {
