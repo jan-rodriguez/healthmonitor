@@ -25,7 +25,8 @@
     <a class="link-to-patient" href="#">
       <div class="alerts">
         <button type="button" class="close">X</button>
-        {{message}} 
+        <div class="left">{{patient_alert this.patient_id}}</div> 
+        <div class="right">{{message}}</div>
       </div>
     </a>
   {{/each}}
@@ -42,7 +43,7 @@
     {{> navbar}}
 
     <div id="patient_alerts">
-	{{> patient_alerts}}
+	     {{> patient_alerts}}
   	</div>
 
     <div id="contentdiv">
@@ -100,7 +101,7 @@
 
 <template name="patient_alerts">
   {{#each alert_list}}
-  	<div class="alerts">
+  	<div class="alerts center">
     	<button type="button" class="close">X</button>
     	{{message}} 
   	</div>
