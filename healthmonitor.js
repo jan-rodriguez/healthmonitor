@@ -27,11 +27,6 @@ if (Meteor.isClient) {
       template: 'signup'
     });
 
-    this.route('home', {
-      path: '/home',
-      template: 'home'
-    });
-
     //Patient pages
     this.route("patients", {
       path : "/patient/:_id",
@@ -47,19 +42,6 @@ if (Meteor.isClient) {
 
   //Runs whenever the DOM is ready
   Meteor.startup(function () {
-  //   Router.onBeforeAction(function(pause) {
-  //     console.log("user is " + Meteor.user());
-  //     if (!Meteor.user()) {
-  //       pause();
-  //       Router.go('root');
-  //     }
-  //   }, {except: ['root', 'signup']});
-    // Router.onBeforeAction(function(pause) {
-    //   if (Meteor.user()) {
-    //     pause();
-    //     Router.go('root');
-    //   }
-    // }, {only: 'signup'});
 
     function propComparator(prop) {
       return function(a, b) {
@@ -754,82 +736,6 @@ if (Meteor.isServer) {
       }
     }
 
-    // if (Heart_R.find().count() === 0) {
-    //   for (var patient_id = 1; patient_id <= 10; patient_id++) {
-    //     // for (var day = 1; day <= 30; day++) {
-    //     //   var date = new Date(Date.UTC(2014, 4, day));
-    //     //   Heart_R.insert({
-    //     //     patient_id: patient_id,
-    //     //     date: date, 
-    //     //     heart_rate: Math.random() * (90 - 50) + 50
-    //     //   });
-    //     // }
-
-    //     // Heart_R.insert({
-    //     //   patient_id: patient_id,
-    //     //   date: new Date(Date.UTC(2014, 5, 1)), 
-    //     //   heart_rate: Math.random() * (90 - 50) + 50
-    //     // });
-
-    //     var months = [5, 6, 7, 8, 9, 10, 11, 12];
-    //     for (var month = 0; month < months.length; month++) {
-    //       var date = new Date(Date.UTC(2013, months[month]));
-    //       Heart_R.insert({
-    //         patient_id: patient_id,
-    //         date: date, 
-    //         heart_rate: Math.random() * (90 - 50) + 50,
-    //       });        
-    //     }
-    //             Heart_R.insert({
-    //       patient_id: patient_id,
-    //       date: new Date(Date.UTC(2014, 1)), 
-    //       heart_rate: Math.random() * (90 - 50) + 50
-    //     });
-    //             Heart_R.insert({
-    //       patient_id: patient_id,
-    //       date: new Date(Date.UTC(2014, 2)), 
-    //       heart_rate: Math.random() * (90 - 50) + 50
-    //     });
-    //             Heart_R.insert({
-    //       patient_id: patient_id,
-    //       date: new Date(Date.UTC(2014, 3)), 
-    //       heart_rate: Math.random() * (90 - 50) + 50
-    //     });
-    //   }
-    // }
-
-    // if (Weight.find().count() === 0) {
-    //   for (var patient_id = 1; patient_id <= 10; patient_id++) {
-    //     for (var day = 1; day <= 30; day++) {
-    //       var date = new Date(2014, 4, day, 0, 0, 0, 0);
-    //       Weight.insert({
-    //         patient_id: patient_id,
-    //         date: date, 
-    //         weight: Math.random() * (250 - 125) + 125,
-    //       });
-    //     }
-
-    //     Weight.insert({
-    //       patient_id: patient_id,
-    //       date: new Date(2014, 5, 1, 0, 0, 0, 0), 
-    //       weight: Math.random() * (250 - 125) + 125,
-    //     });
-
-    //     months = [5, 6, 7, 8, 9, 10, 11, 12, 1, 2, 3];
-    //     for (var month = 0; month < months.length; month++) {
-    //       var date = new Date(2014, months[month], 1, 0, 0, 0, 0);
-    //       Weight.insert({
-    //         patient_id: patient_id,
-    //         date: date, 
-    //         weight: Math.random() * (250 - 125) + 125,
-    //       });        
-    //     }
-    //   }
-    // }
-
-    // Meteor.publish("all_medications", function() {
-    //   return Medications.find();
-    // });
     // Patients.remove({});
     if (Patients.find().count() === 0) {
       Patients.insert({
