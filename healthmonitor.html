@@ -240,7 +240,7 @@
 				<th colspan="5" class="theader bigfont center">Current Medications</th>
 				<td colspan="2" class="theader">
 					<div class="popover-markup"> 
-						<button id="prescribe" type="button popover-markup" class="btn btn-primary trigger" data-placement="top">Prescribe New</button>
+						<button id="prescribe" type="button" class="btn btn-primary trigger" data-placement="top">Prescribe New</button>
 						<div class="head hide">Prescribe New Medication</div>
 						<div class="content hide">
 							<div class="form-group">
@@ -263,7 +263,7 @@
 									</div>
 									<input id='med-reason' type="text" class="form-control norm" size="56" placeholder="Reason">
 									<textarea id='med-comment' class="form-control norm" cols="56" placeholder="Comment..."></textarea> 
-									<button id="add-med" type="button" class="btn btn-default btn-block">Add</button>
+									<button id="add-med" type="submit" class="btn btn-default btn-block">Add</button>
 								</form>
 							</div>
 						</div>
@@ -292,8 +292,34 @@
 <template name="medication">
 	<tr>
 		<td>
-			<div class="popover-markup"> 
-				<a href="#" class="disabled edit">edit</a>
+			<div class="popover-edit-markup"> 
+				<a href="#" class="disabled edit trigger" data-placement="top">edit</a>
+				<div class="head hide">Edit Medication</div>
+				<div class="content hide">
+					<div class="form-group">
+						<form id="medication-edit-form" action="action">
+							<input type="text" class="form-control norm med-edit-name" size="56" placeholder="Name of Medication" required>
+							<div class="form-horizontal">
+								<input type="text" class="form-control norm mar-right med-edit-dose" size="4" placeholder="0" required>
+								<select class="form-control norm mar-right med-edit-dose-unit">
+									<option value="ml">ml</option>
+									<option value="mg">mg</option>
+									<option value="tbsp">tbsp</option>
+								</select>
+								every
+								<input type="text" class="form-control norm mar-right mar-left med-edit-freq" size="4" placeholder="0" required>
+								<select class="form-control norm med-edit-freq-unit">
+									<option value="hrs">hrs</option>
+									<option value="days">days</option>
+									<option value="weeks">weeks</option>
+								</select>	 
+							</div>
+							<input type="text" class="form-control norm med-edit-reason" size="56" placeholder="Reason">
+							<textarea class="form-control norm med-edit-comment" cols="56" placeholder="Comment..."></textarea> 
+							<button type="submit" class="btn btn-default btn-block edit-med">Edit</button>
+						</form>
+					</div>
+				</div>
 			</div>
 		</td>
 		<td><a href="#" class="disabled discontinue">discontinue</a></td>

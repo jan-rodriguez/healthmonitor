@@ -541,11 +541,46 @@ if (Meteor.isClient) {
   //Medication events - discontinue and edit
   Template.medication.events({
     'click .discontinue' : function(e, t) {
+      e.preventDefault();
       Medications.update(this._id, {end_date : new Date()});
     },
     'click .edit' : function(e, t) {
-  //implement edit
-    } 
+      e.preventDefault();
+      var medication = this;
+      console.log(medication);
+      $('.med-edit-name').val(medication.name);
+      $('.med-edit-dose').val(medication.dose);
+      $('.med-edit-dose-unit').val(medication.dose_unit);
+      $('.med-edit-freq').val(medication.frequency);
+      $('.med-edit-freq-unit').val(medication.frequency_unit);
+      $('.med-edit-comment').val(medication.comment);
+      $('.med-edit-reason').val(medication.reason);
+
+      $('.popover').on('click', function(e) {
+        e.stopPropagation(); 
+      });
+
+      $('.popover').on('click', '.edit-med', function(e) {
+        e.preventDefault();
+        console.log('editt');
+        var updateQuery = {$set: {
+          name : $('.med-edit-name').val(),
+          dose : $('.med-edit-dose').val(),
+          dose_unit : $('.med-edit-dose-unit').val(),
+          frequency : $('.med-edit-freq').val(),
+          frequency_unit : $('.med-edit-freq-unit').val(),
+          comment : $('.med-edit-comment').val(),
+          reason : $('.med-edit-reason').val() }}
+
+          Medications.update(medication._id, updateQuery, function (error) {
+            if (!error) {
+              $('.popover-edit-markup>.trigger').popover('hide');
+            }
+          });
+        e.stopPropagation(); 
+      });
+      e.stopPropagation();
+    }
   });
 
   //Prescribe new medication code, runs once medications has been rendered. 
@@ -563,32 +598,49 @@ if (Meteor.isClient) {
           e.stopPropagation(); 
         });
 
-      $('.popover').on('click', '#add-med', function(e) {
-        e.preventDefault();
+        if (!this.rendered) {
+          $('.popover').on('click', '#add-med', function(e) {
+            e.preventDefault();
+            console.log('added med');
+            Medications.insert({
+              patient_id : Router.getData().join_id,
+              doctor_id : 1/*this user from join_id*/,
+              name : $('#med-name').val(),
+              dose : $('#med-dose').val(),
+              dose_unit : $('#med-dose-unit').val(),
+              frequency : $('#med-freq').val(),
+              frequency_unit : $('#med-freq-unit').val(),
+              comment : $('#med-comment').val(),
+              reason : $('#med-reason').val(),
+              start_date : new Date(),
+              end_date : null
+            }, function (err) {
+                if (!err) {
+                  $('#prescribe').popover('hide');
+                  $('#add-med').unbind('click');
+                }
+              });
+              e.stopPropagation(); 
+          });
+        }
 
-        Medications.insert({
-          patient_id : Router.getData().join_id,
-          doctor_id : 1/*this user from join_id*/,
-          name : $('#med-name').val(),
-          dose : $('#med-dose').val(),
-          dose_unit : $('#med-dose-unit').val(),
-          frequency : $('#med-freq').val(),
-          frequency_unit : $('#med-freq-unit').val(),
-          comment : $('#med-comment').val(),
-          reason : $('#med-reason').val(),
-          start_date : new Date(),
-          end_date : null
-        }, function (err) {
-          if (!err) {
-            $('#prescribe').popover('hide');
-          }
-        });
-        e.stopPropagation(); 
+        this.rendered = true;
+        e.stopPropagation();
       });
+    };
 
-      e.stopPropagation();
-    });
-  }
+  //Edit medication code, runs once medication has been rendered. 
+  Template.medication.rendered = function () {
+      $('.popover-edit-markup>.trigger').popover({
+        html: true,
+        title: function () {
+          return $(this).parent().find('.head').html();
+        },
+        content: function () {
+          return $(this).parent().find('.content').html();
+        }
+      });
+  };
 
   //Close popover for prescribing medication
   $(document).on('click', function() {
