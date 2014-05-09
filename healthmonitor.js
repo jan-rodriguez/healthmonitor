@@ -194,6 +194,7 @@ if (Meteor.isClient) {
       var email = t.find('#signup-email').value;
       var password = t.find('#signup-password').value;
       var confirm_password = t.find('#signup-confirm-password').value;
+      var name = t.find('#signup-name').value;
       $('#signup-error').html('');
 
       if (password != confirm_password) {
@@ -203,7 +204,7 @@ if (Meteor.isClient) {
         return false;
       } 
 
-      Accounts.createUser({email: email, password : password}, function(err){
+      Accounts.createUser({email: email, password : password, profile : {name : name}}, function(err){
         if (err) {
           var email_val = $('#signup-email').val();
           $('#signup-error').html('<div class="alert alert-warning error">' + email_val + ' is already in use</div>');
@@ -547,12 +548,6 @@ if (Meteor.isClient) {
     }
   };
 
-  //Get prescribing doctor's name for this medication
-  Template.medication.doctor_name = function () {
-
-    // console.log(Doctors.find({join_id: this.doctor_id}));
-  };
-
   //Medication events - discontinue and edit
   Template.medication.events({
     'click .discontinue' : function(e, t) {
@@ -616,10 +611,10 @@ if (Meteor.isClient) {
         if (!this.rendered) {
           $('.popover').on('click', '#add-med', function(e) {
             e.preventDefault();
-            console.log('added med');
+            console.log(Meteor.user().profile.name);
             Medications.insert({
               patient_id : Router.getData().join_id,
-              doctor_id : 1/*this user from join_id*/,
+              doctor_name : Meteor.user().profile.name,
               name : $('#med-name').val(),
               dose : $('#med-dose').val(),
               dose_unit : $('#med-dose-unit').val(),
@@ -679,6 +674,14 @@ if (Meteor.isServer) {
     //Publish all patients
     Meteor.publish("all_patients", function() {
       return Patients.find();
+    });
+
+    Accounts.onCreateUser(function(options, user) {
+    // [...]
+      if (options.profile)
+        console.log(options.profile);
+        user.profile = options.profile;
+      return user;
     });
 
     //Dummy Data
