@@ -22,7 +22,7 @@
 
 <template name="alerts">
   {{#each alert_list}}
-    <a href="/patient/{{patient_id}}">
+    <a class="link-to-patient" href="#">
       <div class="alerts">
         <button type="button" class="close">X</button>
         {{message}} 
@@ -118,7 +118,7 @@
 				<tr>
 					<td>
 						<div class="navbar-header">
-							<a class="brand" href="/">Health Monitor</a>
+							<a id="home-button" class="brand" href="#">Health Monitor</a>
 						</div>
 					</td>
 					<td>
@@ -177,7 +177,7 @@
 		<p>Health Monitor is the easiest way to view your patients' medical data.</p>
 		<br>
 		<div class="width-400">
-			<form id="login-form" action="action">
+			<form id="login-form">
 		    	<div class="controls">
 		    		<div id="login-error"></div>
 		        	<input type="email" id="login-email" class="form-control mar-bot-15" placeholder="email" required>
