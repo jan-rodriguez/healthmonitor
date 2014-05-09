@@ -373,9 +373,12 @@ if (Meteor.isClient) {
     }
     $('#graphs-wrapper').height(450+25*medicine_data.length);
     $('#space-container1').html(new Array(5+medicine_data.length).join("<br>"));
+    
+    if (medicine_data.length === 0){
+      return;
+    }
 
     var chart = new Highcharts.Chart({
-
       chart: {
         renderTo: 'medicines-container',
         type: 'bar',
@@ -669,76 +672,60 @@ if (Meteor.isServer) {
     //Dummy Data
 
     //seed vital sign measurements
-    var signal_dates = [Date.UTC(2013, 4), Date.UTC(2013, 5), Date.UTC(2013, 6), Date.UTC(2013, 7), 
-    Date.UTC(2013, 8), Date.UTC(2013, 9), Date.UTC(2013, 10), Date.UTC(2013, 11), 
-    Date.UTC(2014, 0), Date.UTC(2014, 1), Date.UTC(2014, 2), Date.UTC(2014, 3), Date.UTC(2014, 4)];
-
-    // if (Blood_P.find().count() === 0) {
-    //   for (var patient_id = 1; patient_id <= 10; patient_id++) {
-    //     for (var day = 1; day <= 30; day++) {
-    //       var date = new Date(2014, 4, day, 0, 0, 0, 0);
-    //       Blood_P.insert({
-    //         patient_id: patient_id,
-    //         date: date, 
-    //         systolic: Math.random() * (160 - 90) + 90,
-    //         diastolic: Math.random() * (100 - 60) + 60
-    //       });
-    //     }
-
-    //     Blood_P.insert({
-    //       patient_id: patient_id,
-    //       date: new Date(2014, 5, 1, 0, 0, 0, 0), 
-    //       systolic: Math.random() * (160 - 90) + 90,
-    //       diastolic: Math.random() * (100 - 60) + 60
-    //     });
-
-    //     months = [5, 6, 7, 8, 9, 10, 11, 12, 1, 2, 3];
-    //     for (var month = 0; month < months.length; month++) {
-    //       var date = new Date(2014, months[month], 1, 0, 0, 0, 0);
-    //       Blood_P.insert({
-    //         patient_id: patient_id,
-    //         date: date, 
-    //         systolic: Math.random() * (160 - 90) + 90,
-    //         diastolic: Math.random() * (100 - 60) + 60
-    //       });        
-    //     }
-    //   }
-    // }
+    var signal_dates = [];
+    var months = [[2013, 4], [2013, 5], [2013, 6], [2013, 7], [2013, 8], [2013, 9], [2013, 10], [2013, 11], [2014, 0], [2014, 1], [2014, 2], [2014, 3]];
+    for (var j = 0; j < 12; j++) {
+      for (var i = 0; i < 31; i++) {
+        var month = months[j];
+        signal_dates.push(Date.UTC(month[0], month[1], i));
+      }
+    }
 
 
     Blood_P.remove({});
 
     for (var patient_id = 1; patient_id <= 10; patient_id++) {
+      var prev_systolic = Math.floor(Math.random() * (160 - 90) + 90);
+      var prev_diastolic = Math.floor(Math.random() * (100 - 60) + 60);
+      var delta = 0;
       for (var i = 0; i < signal_dates.length; i++) {
+        delta = Math.random() * 5 - 2.5;
+        prev_systolic = prev_systolic + delta;
+        delta = Math.random() * 5 - 2.5;
+        prev_diastolic = prev_diastolic + delta;
         Blood_P.insert({
           patient_id: patient_id,
           date: signal_dates[i], 
-          systolic: Math.floor(Math.random() * (160 - 90) + 90),
-          diastolic: Math.floor(Math.random() * (100 - 60) + 60)
+          systolic: prev_systolic,
+          diastolic: prev_diastolic
         });
       }
     }
 
     Heart_R.remove({});
-
     for (var patient_id = 1; patient_id <= 10; patient_id++) {
+      var prev_hr = Math.floor(Math.random() * (90 - 50) + 50);
       for (var i = 0; i < signal_dates.length; i++) {
+        delta = Math.random() * 5 - 2.5;
+        prev_hr = prev_hr + delta;
         Heart_R.insert({
           patient_id: patient_id,
           date: signal_dates[i], 
-          heart_rate: Math.floor(Math.random() * (90 - 50) + 50)
+          heart_rate: prev_hr
         });
       }
     }
 
     Weight.remove({});
-
     for (var patient_id = 1; patient_id <= 10; patient_id++) {
+      var prev_weight = Math.floor(Math.random() * (250 - 125) + 125);
       for (var i = 0; i < signal_dates.length; i++) {
+        delta = Math.random() * 5 - 2.5;
+        prev_weight = prev_weight + delta;
         Weight.insert({
           patient_id: patient_id,
           date: signal_dates[i], 
-          weight: Math.floor(Math.random() * (250 - 125) + 125)
+          weight: prev_weight
         });
       }
     }
