@@ -54,12 +54,12 @@ if (Meteor.isClient) {
   //       Router.go('root');
   //     }
   //   }, {except: ['root', 'signup']});
-    Router.onBeforeAction(function(pause) {
-      if (Meteor.user()) {
-        pause();
-        Router.go('root');
-      }
-    }, {only: 'signup'});
+    // Router.onBeforeAction(function(pause) {
+    //   if (Meteor.user()) {
+    //     pause();
+    //     Router.go('root');
+    //   }
+    // }, {only: 'signup'});
 
     function propComparator(prop) {
       return function(a, b) {
@@ -89,7 +89,7 @@ if (Meteor.isClient) {
       $('#search').autocomplete({
         source : pat_list,
         select : function (event, ui) {
-          Router.go("/patient/" + ui.item.val);
+          window.location = "patient/" + ui.item.val;
           event.preventDefault();
         }
       });
@@ -104,7 +104,7 @@ if (Meteor.isClient) {
           if (name.length > 0){
             pat_list.forEach( function (elt) {
               if ( name.toLowerCase() === elt.label.toLowerCase() ){
-                Router.go("/patient/" + elt.val);
+                window.location = "patient/" + elt.val;
                 return false;
               }
             });
@@ -120,7 +120,7 @@ if (Meteor.isClient) {
         if (name.length > 0) {
           pat_list.forEach( function (elt) {
             if ( name.toLowerCase() === elt.label.toLowerCase() ) {
-              Router.go("/patient/" + elt.val);
+              window.location = "patient/" + elt.val;
               return false;
             }
           });
@@ -140,6 +140,11 @@ if (Meteor.isClient) {
       //Make alerts do not show whenever they are dismissed and refreshed
       Alerts.update (this._id, {show : 0});
       e.preventDefault();
+    },
+    'click .link-to-patient' : function (e) {
+      var id = Patients.findOne({join_id: parseInt(this.patient_id)})._id;
+      window.location = 'patient/' + id;
+      e.preventDefault(); 
     }
   });
 
@@ -162,7 +167,7 @@ if (Meteor.isClient) {
           $('#login-error').html('<div class="alert alert-warning error">Your username or password was incorrect</div>');
           $('#login-password').val('');
         } else {
-          Router.go('home');
+          window.location = '/';
         }
       });
       return false; 
@@ -194,7 +199,7 @@ if (Meteor.isClient) {
           $('#signup-password').val('');
           $('#signup-confirm-password').val('');
         } else {
-          Router.go('home');
+          window.location = "/";
         }
       });
       return false;
@@ -207,8 +212,12 @@ if (Meteor.isClient) {
       e.preventDefault();
 
       Meteor.logout( function() {
-        Router.go('root');
+        window.location = "/";
       });
+    },
+    'click #home-button' : function(e, t) {
+      e.preventDefault();
+      window.location = '/';
     }
   });
 
@@ -504,6 +513,7 @@ if (Meteor.isClient) {
 
   //Get prescribing doctor's name for this medication
   Template.medication.doctor_name = function () {
+    
     // console.log(Doctors.find({join_id: this.doctor_id}));
   };
 
