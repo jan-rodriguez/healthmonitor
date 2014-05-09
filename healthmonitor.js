@@ -550,7 +550,7 @@ if (Meteor.isClient) {
     'click .edit' : function(e, t) {
       e.preventDefault();
       var medication = this;
-      console.log(medication);
+
       $('.med-edit-name').val(medication.name);
       $('.med-edit-dose').val(medication.dose);
       $('.med-edit-dose-unit').val(medication.dose_unit);
@@ -563,25 +563,31 @@ if (Meteor.isClient) {
         e.stopPropagation(); 
       });
 
-      $('.popover').on('click', '.edit-med', function(e) {
-        e.preventDefault();
-        console.log('editt');
-        var updateQuery = {$set: {
-          name : $('.med-edit-name').val(),
-          dose : $('.med-edit-dose').val(),
-          dose_unit : $('.med-edit-dose-unit').val(),
-          frequency : $('.med-edit-freq').val(),
-          frequency_unit : $('.med-edit-freq-unit').val(),
-          comment : $('.med-edit-comment').val(),
-          reason : $('.med-edit-reason').val() }}
+      if (!this.rendered) {
+        $('.popover').on('click', '.edit-med', function(e) {
+          e.preventDefault();
+          console.log("click");
+          console.log(medication.name);
+          console.log($('.med-edit-name').val());
+          var updateQuery = {$set: {
+            name : $('.med-edit-name').val(),
+            dose : $('.med-edit-dose').val(),
+            dose_unit : $('.med-edit-dose-unit').val(),
+            frequency : $('.med-edit-freq').val(),
+            frequency_unit : $('.med-edit-freq-unit').val(),
+            comment : $('.med-edit-comment').val(),
+            reason : $('.med-edit-reason').val() }}
 
-          Medications.update(medication._id, updateQuery, function (error) {
-            if (!error) {
-              $('.popover-edit-markup>.trigger').popover('hide');
-            }
-          });
-        e.stopPropagation(); 
-      });
+            Medications.update(medication._id, updateQuery, function (error) {
+              if (!error) {
+                $('.popover-edit-markup>.trigger').popover('hide');
+              }
+            });
+          e.stopPropagation(); 
+        });
+      }
+
+      this.rendered = true;
       e.stopPropagation();
     }
   });
@@ -604,7 +610,7 @@ if (Meteor.isClient) {
         if (!this.rendered) {
           $('.popover').on('click', '#add-med', function(e) {
             e.preventDefault();
-            console.log('added med');
+
             Medications.insert({
               patient_id : Router.getData().join_id,
               doctor_id : 1/*this user from join_id*/,
