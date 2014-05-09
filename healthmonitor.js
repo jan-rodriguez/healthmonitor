@@ -292,7 +292,7 @@ if (Meteor.isClient) {
     });
 
     return data.filter( function(element) {
-      return element.y >= min_date;
+      return element.y >= min_date && element.low !=  Date.UTC(2014, 4);
     });
   };
 
