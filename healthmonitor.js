@@ -529,6 +529,15 @@ if (Meteor.isClient) {
     }
   };
 
+  //check if collection is empty
+  UI.registerHelper("is_empty", function( collection ) {
+    console.log(collection);
+    if (collection) {
+      return collection.count() === 0;
+    }
+    return false;
+  });
+
   //Medication events - discontinue and edit
   Template.medication.events({
     'click .discontinue' : function(e, t) {
@@ -820,7 +829,7 @@ if (Meteor.isServer) {
       });
     }
 
-    // Alerts.remove({});
+    Alerts.remove({});
     if (Alerts.find().count() === 0){
       Alerts.insert({
         message : "High Blood Pressure",

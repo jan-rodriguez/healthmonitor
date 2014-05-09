@@ -30,6 +30,9 @@
       </div>
     </a>
   {{/each}}
+  {{#if is_empty alert_list}}
+  	<div class="center">You have no alerts.</div>
+  {{/if}}
 </template>
 
 <!-- /Search Page Templates -->
@@ -134,11 +137,11 @@
 							<a id="home-button" class="brand" href="#">Health Monitor</a>
 						</div>
 					</td>
-					<td>
+					<td colspan="3">
 						<div class="inblock">
 						{{#if currentUser}}
 							<form class="navbar-form" role="search">
-								<div class="input-append">
+								<div class="input-append s-nav">
 									<input id="search" type="text" class="nav-search" placeholder="Search" required>
 									<button id="go" type="submit" class="btn btn-default">Search</button>
 								</div>	
@@ -288,6 +291,9 @@
 		{{#each current_medications}}
 			{{> medication}}
 		{{/each}}
+		{{#if is_empty current_medications}}
+			<tr><td colspan="7"><div class="center">This patient currently has no prescribed medications.</div></td></tr>
+		{{/if}}
 		</tbody>
 	</table>
 </template>

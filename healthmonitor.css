@@ -197,7 +197,6 @@ button.selected {
 }
 
 #graphs-wrapper {
-
 	width: 700px;
 	height: 450px;
 	margin: 0 auto;
@@ -206,3 +205,8 @@ button.selected {
 }
 
 /* /Graphs */
+
+.s-nav {
+	margin:	0 auto;
+	width: 200px;
+}
