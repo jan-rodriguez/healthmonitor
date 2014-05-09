@@ -13,7 +13,13 @@ if (Meteor.isClient) {
   Router.map(function () {
     this.route('root', {
       path: '/',
-      template: 'root'
+      template: 'root',
+      waitOn : function () {  // wait for the subscription to be ready; see below
+        return Meteor.subscribe('all_patients');
+      },
+      data : function () {
+        return Patients.findOne(this.params._id);
+      }
     });
 
     this.route('signup', {
@@ -24,12 +30,6 @@ if (Meteor.isClient) {
     this.route('home', {
       path: '/home',
       template: 'home'
-    });
-
-    //Search page
-    this.route ("search", {
-      path: '/search',
-      template : "search_page"
     });
 
     //Patient pages
@@ -97,6 +97,7 @@ if (Meteor.isClient) {
       $('#search').keypress(function (e) {
         //If user presses enter
         if (e.keyCode === 13) {
+          e.preventDefault();
 
           var name = $(this).val();
 
@@ -113,8 +114,11 @@ if (Meteor.isClient) {
       });
 
       $('#go').click( function (evt) {
+        evt.preventDefault();
 
         var name = $('#search').val();
+
+        console.log(name);
 
         //Run trough list if we find a match, go to the page
         if (name.length > 0) {
@@ -127,12 +131,20 @@ if (Meteor.isClient) {
         }
       });
     });
+
   });
 
   //Show alerts that have not been previously dismissed
   Template.alerts.alert_list = function () {
     return Alerts.find({show : 1});
   };
+
+  UI.registerHelper("patient_alert", function( patient_id ) {
+    var patient = Patients.findOne({join_id : patient_id});
+    if (patient){
+      return patient.first_name + " " + patient.last_name;
+    }
+  });
 
   //Functionality for dismissing alerts
   Template.alerts.events({
@@ -843,7 +855,7 @@ if (Meteor.isServer) {
       });
       Patients.insert({
         join_id: 10,
-        first_name : "Ashley",
+        first_name : "Marisol",
         last_name : "Smith",
         age : "35",
         blood_type : "O",
@@ -854,14 +866,58 @@ if (Meteor.isServer) {
     Alerts.remove({});
     if (Alerts.find().count() === 0){
       Alerts.insert({
-        message : "A wild Gabo appeared",
+        message : "High Blood Pressure",
         show : 1,
-        patient_id : 5
+        patient_id : 1,
+        date : new Date()
       });
       Alerts.insert({
-        message : "Don't look at the sun",
+        message : "Low Diastolic Blood Pressure",
         show : 1,
-        patient_id : 1
+        patient_id : 1,
+        date : new Date()
+      });
+      Alerts.insert({
+        message : "High Systolic Blood Pressure",
+        show : 1,
+        patient_id : 1,
+        date : new Date()
+      });
+      Alerts.insert({
+        message : "Extremely high heart rate",
+        show : 1,
+        patient_id : 1,
+        date : new Date()
+      });
+      Alerts.insert({
+        message : "Low blood pressure",
+        show : 1,
+        patient_id : 1,
+        date : new Date()
+      });
+      Alerts.insert({
+        message : "Conflicting medications",
+        show : 1,
+        patient_id : 1,
+        date : new Date()
+      });
+      Alerts.insert({
+        message : "Drastic weight loss",
+        show : 1,
+        patient_id : 1,
+        date : new Date()
+      });
+      Alerts.insert({
+        message : "Low blood pressure",
+        show : 1,
+        patient_id : 1,
+        date : new Date()
+      });
+      Alerts.insert({
+        message : "Conflicting Medications",
+        show : 1,
+        patient_id : 1,
+        date : new Date()
       });
     }
 

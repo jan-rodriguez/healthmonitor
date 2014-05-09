@@ -6,7 +6,7 @@ body {
 
 #alertdiv {
 	height: 	500px;
-	overflow-y: hidden;
+	overflow-y: scroll;
 	width: 		800px;
 	display: 	inline-block;
 }
@@ -15,7 +15,17 @@ body {
 	text-align: center;
 }
 
+div.left {
+	float: left;
+	padding-left: 20px;
+}
+
+div.right {
+	padding-left: 400px;
+}
+
 .alerts {
+	text-align: left;
 	background-color: lightcoral;
 	color:	black;
 	margin: 1px;
@@ -86,6 +96,8 @@ input[type=password], input[type=email] {
 }
 
 #patient_alerts {
+	max-height: 150px;
+	overflow-y: scroll;
 	width: 800px;
 	margin: 0 auto;
 }
