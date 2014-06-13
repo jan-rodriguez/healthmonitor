@@ -1,1 +1,212 @@
-/* CSS declarations go here */
+
+body {
+	font-size: 16px;
+	background-color: #FDFDFD;
+}
+
+#alertdiv {
+	height: 	500px;
+	overflow-y: scroll;
+	width: 		800px;
+	display: 	inline-block;
+}
+
+#maindiv {
+	text-align: center;
+}
+
+div.left {
+	float: left;
+	padding-left: 20px;
+}
+
+div.right {
+	padding-left: 400px;
+}
+
+.alerts {
+	text-align: left;
+	background-color: lightcoral;
+	color:	black;
+	margin: 1px;
+	margin-bottom: 5px;
+	text-shadow: none;
+	padding: 15px;
+	border: 1px solid transparent;
+	border-radius: 4px;
+}
+
+.center {
+	text-align: center;
+}
+
+.inblock {
+	display: inline-block;
+}
+
+/* Login */
+
+.error {
+	padding: 8px;
+	margin-bottom: 10px;
+}
+
+.width-400 {
+	width: 400px;
+	margin: 0 auto;
+}
+
+input[type=password], input[type=email] {
+    height: 28px !important;
+    margin-bottom: 15px !important;
+}
+
+.input-text {
+	height: 28px !important;
+    margin-bottom: 15px !important;
+}
+
+/* /Login */
+
+/* Navbar */
+
+.fixed-layout {
+	table-layout: fixed;
+}
+
+.nav-search {
+	height:	34px !important;
+	width: 130%;
+}
+
+.input-append {
+	margin-bottom: 5px;
+}
+
+.center-bar {
+	position: relative;
+	left: -70px;
+}
+
+/* /Navbar */
+
+/* Patient Page */
+
+#patientinfo {
+	margin: 0px auto;
+	text-align: center;
+}
+
+#patientname {
+	font-size: 30px;
+}
+
+#timeselect {
+	width: auto;
+	margin: auto;
+}
+
+#patient_alerts {
+	max-height: 150px;
+	overflow-y: scroll;
+	width: 800px;
+	margin: 0 auto;
+}
+
+/* /Patient Page */
+
+/* Medications */
+
+#medtable {
+	margin-bottom: 0px;
+}
+
+#medtable.table>thead>tr>th {
+	border-bottom: 0px;
+}
+
+.theader {
+	border-bottom: 3px solid black !important;
+}
+
+.bigfont {
+	font-size: 24px;
+}
+
+.popover {
+	min-width: 410px;
+}
+
+.popover-title {
+	background-color: #428bca;
+	text-align: center;
+	font-size: 16px;
+	color: #fff;
+}
+
+.norm {
+	width: auto;
+	display: inline-block;
+	color: #333;
+}
+
+input.norm {
+	height: 28px !important;
+}
+
+textarea, .form-horizontal {
+	margin-bottom: 10px;
+}
+
+.mar-right {
+	margin-right: 17px;
+}
+
+.mar-left {
+	margin-left: 17px;
+}
+
+#medications {
+	width: 100%;
+	display: inline-block;
+	border: solid 1px;
+}
+
+.gray {
+	background-color: #ddd;
+}
+
+/* /Medications */
+
+/* Graphs */
+
+button.selected {
+	background-color: #ddd;
+}
+
+.fixwidth {
+	width: 500px;
+	display: inline-block;
+}
+
+#graphs {
+	width: 698px;
+	height: 400px;
+	margin: 0 auto;
+}
+
+#graphs img {
+	width: inherit;
+	height: inherit;
+	padding: 1 auto;
+}
+
+#graphs-wrapper {
+	width: 700px;
+	height: 450px;
+	margin: 0 auto;
+	border: solid 1px;
+
+}
+
+/* /Graphs */
